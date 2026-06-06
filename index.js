@@ -1,5 +1,5 @@
 // const { default: Groq } = require("groq-sdk")
-const version = "BiVi v1.6.2 Unstable"
+
 const sessions = new Map();
 const { Client, Events, GatewayIntentBits } = require('discord.js')
 const groq = require('groq-sdk')
@@ -36,6 +36,9 @@ client.on(Events.MessageCreate, async (mess) => {
 	if (mess.author.bot) return;
 	const session = sessions.get(mess.author.id);
 	const value = filt(mess.content)
+	if (session?.type === "Story_Setup") {
+		return;
+	}
 	if (session?.type === "Playing_Story") {
 		if (value !== "stop" && value !== "pause" && value !== "play" && value !== "resume" && value !== "restart") { return; }
 		if (session.type === "Playing_Story" && (value === "play" || value === "resume" || value === "restart")) {
@@ -43,13 +46,24 @@ client.on(Events.MessageCreate, async (mess) => {
 			return;
 		}
 		if (session?.type == "Playing_Story" && (value == "pause")) {
-			session.set(mess.author.id, { type: "Paused" });
-			await indi_reply(mess, "⏸️ Story Paused.");
+			sessions.set(mess.author.id, { type: "Paused", pausedAt: Date.now() });
+			await indi_reply(mess, "Pausing the Story...")
+			await indi_reply(mess, "⏸️ Story Paused [Timeout in 10 Minutes]");
+			setTimeout(() => {
+
+				const current = sessions.get(mess.author.id);
+
+				if (current?.type === "Paused") {
+					sessions.delete(mess.author.id);
+					indi_reply(mess, "⏰ Story cancelled because it was paused for too long.");
+				}
+
+			}, 10 * 60 * 1000);
 			return;
 		}
-		if (session?.type == "Playing_Story" || session?.type == "Paused" && (value == "stop")) {
-			session.set(mess.author.id, { type: "Stopped" });
-			await indi_reply(mess, "🛑 Story Stoped!");
+		if ((session?.type === "Playing_Story" || session?.type === "Paused") && value === "stop") {
+			sessions.set(mess.author.id, { type: "Stopped" });
+			await indi_reply(mess, "🛑 Story Stopped!");
 			return;
 		}
 	}
@@ -70,7 +84,7 @@ client.on(Events.MessageCreate, async (mess) => {
 	}
 	console.log("Message by:", name)
 	console.log("Message =", value)
-	if (command[value] || commands_arr.includes(value) || value.includes(String(Object.keys(store)))) {
+	if (typeof command[value] === "function" || commands_arr.includes(value) || value.includes(String(Object.keys(store)))) {
 		if (value == "hello" || value == "Hi") {
 			reply(mess, hello(name, mess.author.username) + end())
 		}
@@ -105,15 +119,22 @@ Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v6.0.1`)
 
 			await b.reply(`Do You Want to Listen to any Story in the given List of Stories?
 Expected Input [Yes/No/Exit]`)
+			j = storyKeys.join('\n');
 			const filter = m => m.author.id === mess.author.id;
 
 			try {
-				const yesNoCollected = await mess.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] });
+				const yesNoCollected = await b.channel.awaitMessages({ filter, max: 1, time: 60000, errors: ['time'] });
 				const yesNoResponse1 = filt(yesNoCollected.first().content);
 				var hmm = parseInt(yesNoCollected.first().content.split(":")[0]);
-				if (filt(yesNoCollected.first().content.split(":")[1] === "detail" || filt(yesNoCollected.first().content.split(":")[1] === "details")) && ((!isNaN(hmm)) && hmm <= Object.keys(store).length && hmm >= Object.keys(store).length)) {
-					var hehe = store[1][0];
-					indi_reply(mess, `Story:
+				const detailsPart = yesNoCollected.first().content.split(":")[1];
+const detailedParam = detailsPart ? filt(detailsPart) : "";
+
+
+
+
+				if ((detailedParam === "detail" || detailedParam === "details") && (!isNaN(hmm) && hmm >= 1 && hmm <= Object.keys(store).length)) {
+					var hehe = store[hmm][0];
+					await indi_reply(mess, `Story:
 ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${hehe[0][5]}\n
 Maximum Time Duration: ${15 / 1000}s OR ${((15 / 1000) / 60)}mins
 Minimum Time Duration: ${60 / 1000}s OR ${((60 / 1000) / 60)}mins
@@ -137,14 +158,23 @@ Reverting Back....!1`)
 
 
 				if (yesNoResponse1 == "yes") {
+					sessions.set(mess.author.id, {
+						type: "Story_Setup"
+					});
 					const a = await reply(mess, `Ok, Please Choose the Number of the Story from the Following:\n`)
 					await a.reply(await j)
 
-					const numCollected = await mess.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] });
+					const numCollected = await a.channel.awaitMessages({ filter, max: 1, time: 60000, errors: ['time'] });
 
 					const storyIndex = await parseInt(numCollected.first().content);
 
-					if (isNaN(Number(storyIndex))) return;
+					if (isNaN(storyIndex)) {
+						await reply(mess, "❌ Invalid Story Number. Cancelling...");
+						sessions.delete(mess.author.id);
+						return;
+					}
+
+					sessions.set(mess.author.id, { type: "Story_Setup", storyIndex: storyIndex });
 					await reply(mess, `Please Enter the Time Interval for each Story Line Message. (Minimum is **15 Seconds** [Default] and Maximum is **60**.)
 
 Consider this Example: 
@@ -161,30 +191,39 @@ If you Enter **\`15\`**, then each New Story Line message will come in Interval 
 	
 	Tip: IF Reading Story in GROUP, MORE Timing is Preferred as it maintains the Thrills`);
 
-					const timeCollected = await mess.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] });
-					let timing = await parseInt(timeCollected.first().content);
+					const timeCollected = await b.channel.awaitMessages({ filter, max: 1, time: 60000, errors: ['time'] });
+					const activeSession = sessions.get(mess.author.id);
+					if (activeSession?.type == "Story_Setup") {
+						let timing = await parseInt(timeCollected.first().content);
 
-					if ((timing < 15) && (timing > 60)) {
-						await indi_reply(mess, "Error Playing the Story Cause the Time Set is Less than 15 seconds or More than 60 seconds.");
-						await indi_reply(mess, `Reverting Back...!`);
-						await sessions.delete(mess.author.id);
-						return;
-					}
-					if ((timing >= 15) && (timing <= 60)) {
-
-						if ((store[storyIndex]) === undefined) { return `Sorry can't Process this Request now...💔` }
-						else {
-							// await sessions.set(mess.author.id, { type: "Playing_Story" });
-							await storyplay(mess, store[storyIndex], timing, sessions)
+						if (isNaN(timing) || timing < 15 || timing > 60) {
+							await indi_reply(mess, "Error Playing the Story Cause the Time Set is Less than 15 seconds or More than 60 seconds.");
+							await indi_reply(mess, `Reverting Back...!`);
+							sessions.delete(mess.author.id);
+							return;
 						}
-						// await sessions.set(mess.author.id, { type: "none" });
-						await sessions.delete(mess.author.id);
-						return;
+						if ((timing >= 15) && (timing <= 60)) {
+
+							if ((store[activeSession.storyIndex]) === undefined) {
+								await reply(mess, `Sorry can't Process this Request now...💔`)
+								sessions.delete(mess.author.id)
+								return;
+							}
+							else {
+
+								sessions.set(mess.author.id, { type: "Playing_Story" });
+								await storyplay(mess, store[activeSession.storyIndex], timing, sessions)
+
+							}
+							// await sessions.set(mess.author.id, { type: "none" });
+							return;
+						}
 					}
 					// client.on(Events.MessageCreate, newmess)
 				}
 
 			} catch (error) {
+				sessions.delete(mess.author.id)
 				reply(mess, "Sorry Dear, Request Time Over!\nTimeOut Error in: (" + end())
 				return
 			}
@@ -222,7 +261,7 @@ If you Enter **\`15\`**, then each New Story Line message will come in Interval 
 			sessions.delete(mess.author.id);
 			return;
 		}
-		else if ((value.startsWith('force:')) && value.includes(" ")) {
+		else if ((filt(value).startsWith('force:')) && value.includes(" ")) {
 			reply(mess, checker(mess))
 		}
 		else if (value == 'clear' || value == 'cls') {
@@ -239,17 +278,13 @@ Other Expected Inputs:
 	\`Yes:all\`-> Deletes last 100 Messages [Included]`);
 
 		}
+
 		else {
-			if (typeof String(command[value] === "function")) {
+			if (typeof command[value] === 'function') {
 				const result = await command[value](mess);
+
 				if (result && result.trim() !== "") {
 					await reply(mess, result + end());
-				}
-				else {
-					const result = await command[value];
-					if (result && result.trim() !== "") {
-						await reply(mess, result + end());
-					}
 				}
 			}
 		}
@@ -295,4 +330,3 @@ process.on("SIGINT", () => {
 	client.destroy()
 	process.exit(0);
 })
-module.exports = { version }

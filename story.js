@@ -54,18 +54,18 @@ const WillFam1 = [
 
 
 
-async function storyplay(mess, story, num = 15, sessions) {
+async function storyplay(mess, storys, num = 15, sessions) {
     sessions.set(mess.author.id, { type: "Playing_Story" });
     if (!isNaN(num)) {
 
-        if (num < 15 && num > 60) {
+        if (num < 15 || num > 60) {
             await indi_reply(mess, "Error Playing the Story Cause the Time Set is Less than 15 Seconds.")
         }
         else {
             num *= 1000;
-            story[1].push("Story Ends Here...");
-            indi_reply(mess, `Story:
-${story[0][0]}\n${story[0][1]}\n${story[0][2]}\n${story[0][3]} , ${story[0][4]}\n${story[0][5]}\nTotal Time: *${(num / 1000) * story[1].length.toFixed(2)}*s or *${((num / 1000) / 60) * story[1].length.toFixed(2)}*min
+            const story = [storys[0], [...storys[1], "Story Ends Here..."]];
+            await indi_reply(mess, `Story:
+${story[0][0]}\n${story[0][1]}\n${story[0][2]}\n${story[0][3]} , ${story[0][4]}\n${story[0][5]}\nTotal Time: *${((num / 1000) * story[1].length).toFixed(2)}*s or *${((((num / 1000) / 60) * story[1].length)).toFixed(2)}*min
 ${story[0][0]}
 Selected Time Duration: ${(num / 1000).toFixed(2)}s OR ${((num / 1000) / 60).toFixed(2)}min
 
@@ -80,19 +80,22 @@ ${story[0][0]} Story is Starting in 15 Seconds...`)
 
                 const interval2 = setInterval(() => {
                     const currentSession = sessions.get(mess.author.id);
-                if(!currentSession || currentSession?.type == "Stopped" || (filt(mess.content)) === "stop"){
+
+                if(!currentSession || currentSession.type == "Stopped"){
                     clearInterval(interval2);
                     sessions.delete(mess.author.id);
                     return;
                 }
-                if(!currentSession || currentSession?.type == "Paused" || (filt(mess.content)) === "Paused"){
-
+                if(!currentSession || currentSession.type == "Paused"){
                     return;
                 }
 
-                if(!currentSession || currentSession?.type == "Stopped" || (filt(mess.content)) === "stop"){
-                    clearInterval(interval2);
-                    sessions.delete(mess.author.id);
+                if (currentSession.type == "Restart"){
+                    
+                    i = 0;
+                    sessions.set(mess.author.id,{
+                        type: "Playing_Story"
+                    })
                     return;
                 }
                     
@@ -100,6 +103,7 @@ ${story[0][0]} Story is Starting in 15 Seconds...`)
                     
                     if (i >= story[1].length) {
                         clearInterval(interval2);
+                        sessions.delete(mess.author.id)
                         return;
                     }
                     indi_reply(mess, String(story[1][i]));

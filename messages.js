@@ -1,5 +1,5 @@
 const os = require('os')
-const {version} = require('./index.js')
+const {version} = require('./config.js')
 function version_info(){
    return version;
 }
@@ -16,34 +16,29 @@ I am **BiVi** and I can do things that you might only imagine :owl::pinched_fing
 
 :helmet_with_cross: You may talk dirty to me if you are horny. :bikini:🫦
 You can also create Images you Imagine!
-There's Much MORE!!!
-
-Don't these all sounds crazzzyyy?
+There's Much MORE!
 
 > You can write these commands for getting started or can simply write whatever you're mind is cooking. ✍🏻🔥
 -**\`Help\`**
 -**\`Date\`**
 -**\`Details\`**
--**\`Mood\`**
--**\`Points\` / \`Points{UserName}\`** (Requires Acc Linking)
 -**\`UserInfo\`** (Requires Acc Linking)
 -**\`ServerStatus\`**
--**\`ConnectAcc\`** || **\`LinkAcc\`**
--**\`DisconnectAcc\`** || \`**UnlinkAcc\`** (Requires Acc Linking)
+-**\`Delete\`** //Use with Referenced Messages
 -**\`Clear\`**
--**\`Details\`** / **\`OnwerDetails\`**
+-**\`OwnDetails\`**
 -**\`Report\`** //Also used to give feedbacks and suggestions**
--**\`Music\`**
--**\`Code\`** || **\`CodeHelp\`**
--**\`Image\`**
--**\`IMGSol\`** //For Getting Help Commands Related to Images and PDFs.
--**\`Skill-ShowOff\`** (Requires Acc Linking)
--**\`LanguagSet\`**
+There's Many More! Just Type \`Commands\` to get all Commands List!
 
-There's Many More! Just Type \`CommandCheat\` to get all Commands List!
-Apart from these, Please Type **"Help"** if wanna get some basic knowledge of SuperNova's capabilities!
+Special Commands: **\`Force:\`**, **\`Image:\`**, **\`Search:\`** // Works on Prompt...
+Just Type \`SpecialCommands\` to get Special *Commands Usage Help*!
 
-NOTE: If you Find any BUG :lady_beetle: Please :pray: REPORT it to us at report@bivi.online OR report.BiVi.Online && All the Server Status are captured using another Servers.`
+Apart from these, Please Type **"Help"** if wanna get some basic knowledge of BiVi's capabilities!
+
+NOTE: If you Find any BUG :lady_beetle: Please :pray: REPORT it to us at report@bivi.online
+All the Server Status are captured using another Servers.
+
+Version: ${version_info}`
 }
 
 // -**\`MessMeAt -Dis -Whats -Insta -GooMess\`** (Requires Acc Linking)
@@ -89,7 +84,7 @@ function date() {
 -**Guild ID**: \`${guild.id}\`
 
 -**Avatar**:
-\`${user.displayAvatarURL({ extension: "png", size: 1024 })}\`
+${user.displayAvatarURL({ extension: "png", size: 1024 })}
 `;
 }
 
@@ -110,7 +105,10 @@ function serverInfo() {
 -**Total RAM**: \`${(os.totalmem()/1024**3).toFixed(2)} GB\`
 -**Free RAM**: \`${(os.freemem()/1024**3).toFixed(2)} GB\`
 -**Used RAM**: \`${((os.totalmem()-os.freemem())/1024**3).toFixed(2)} GB\`
--**System Uptime**: \`${(os.uptime()/3600).toFixed(2)} Hours\``;
+-**System Uptime**: \`${(os.uptime()/3600).toFixed(2)} Hours\`;
+-**CDN Server Provider**: \`Cloudflare\`;
+
+Details Fetched in:`
 }
 
 function botInfo() {
@@ -140,6 +138,41 @@ function errmsg(error){
    return (`Error \`${error.status}\` of \`${error.name}\` with Code \`${error.code}\`:
 **Reason:**
 > ${error.message}`)
+}
+
+function help(){
+   return `🙂‍↔️ Hi there ${name} ^_~,
+Welcome to the HELP Command
+-\`I will Guide you though my every hidden command\`
+-\`Before we Proceed further, please note that all commands are case-insensitive. Hence, you can write either capital or small no problem, However the commands are presented in the CamelCase so that users can perceive it's meaning easily.\`
+> You can write these commands for chatting or can simply write whatever you wish for.
+
+\`Let's see some commands and it's USAGE\`
+
+-*\`Date\`* : Returns Current Date.
+-*\`Mood\`*  : Used in Setting the Default Mood of the ChatBot [Custom]
+-*\`UserInfo\`* : Returns the UserInfo including Profile Pic.
+-*\`ServerStatus\` OR \`ServerInfo\`* : Returns the Live Server Details
+-*\`Clear\` OR \`Cls\`* : It is used to Delete Chats under the Specific Channel. By Default it is set to only BiVi's Messages, however you can use \`All\` command for delete whole chats. Write: \`Clear\` to get more of it's details.
+-*\`Bot\` OR \`BotInfo\`* : 
+-*\`Report\`* : Used to Report directly to the Developer [Under-Construction till \`*BiVi v1.2.1 Stable*\`]
+-*\`Image\`* : Used to Create Image. Use Command as: *\`Image:* Prompt_Here\`
+-*\`VerInfo\`* |OR| *\`Version\`*: Used to get the Version Information of the BiVi.
+\`There's Many More!!! Just Type \`Commands\ \`to get all Commands List!\`
+
+We made the world's first Super Advanced Error Handling System (AEHS) especifically for BiVi Bot released in *\`BiVi Unstable v1.0.7\`*
+However, If you get any error in the Message Generation then write:
+
+**\`*Force:** Prompt_here\`
+
+Other Crazie Backup Commands:
+-**\`Image:\`**
+-**\`Story:\`** : [Contains Child Commands, So please write: *\`Story\`* first]
+
+Want to connect to Developer or want to Report or give Feedback? Email us at: support@bivi.online
+We would be happy to listen from you!
+
+Message Fetched from Server and Sent in:`
 }
 
 function commands(){
@@ -175,51 +208,29 @@ Version: ${version_info}
 Message Fetched and Sent in:`
 }
 
-function help(){
-   return `🙂‍↔️ Hi there ${name} ^_~,
-Welcome to the HELP Command
--\`I will Guide you though my every hidden command\`
--\`Before we Proceed further, please note that all commands are case-insensitive. Hence, you can write either capital or small no problem, However the commands are presented in the CamelCase so that users can perceive it's meaning easily.\`
-> You can write these commands for chatting or can simply write whatever you wish for.
+function SpecialCommands(){
+   return `Welcome to Special Commands Usage Info!
+   These commands will help you create more Improved and Detailed Outlinings!
+   
+   Present Avaiable Special Commands:
 
-\`Let's see some commands and it's USAGE\`
+      -**\`Force:\`** Prompt...
+         This allows you to Force-fully divert your Input to different AI Models. However, you won't be requiring this because BiVi is equiped with world's first Super Advanced Error Handling System (AEHS) in v1.0.7. It automatically transfers your message to different AI Models ensuring smooth and reliable memory and Result
 
--*\`Date\`* : Returns Current Date.
--*\`Mood\`*  : Used in Setting the Default Mood of the ChatBot [Custom]
--*\`Points\` : [Deprecated]
--*\`UserInfo\`* : Returns the UserInfo including Profile Pic.
--*\`ServerStatus\` OR \`ServerInfo\`* : Returns the Live Server Details
--*\`Clear\` OR \`Cls\`* : It is used to Delete Chats under the Specific Channel. By Default it is set to only BiVi's Messages, however you can use \`All\` command for delete whole chats. Write: \`Clear\` to get more of it's details.
--*\`Bot\` OR \`BotInfo\`* : 
--*\`Report\`* : Used to Report directly to the Developer [Under-Construction till \`*BiVi v1.2.1 Stable*\`]
--*\`Music\`* : [Under-Construction till version \`*BiVi v3.0.0 Stable*\`]
--*\`Code\`* : [
--*\`Image\`* : Used to Create Image. Use Command as: *\`Image:* Prompt_Here\`
--*\`IMGSol\`* : 
--*\`MessMeAt -Dis -Whats -Insta -GooMess\`* :
--*\`LanguageSet\`* : 
--*\`VerInfo\`* |OR| *\`Version\`*: Used to get the Version Information of the BiVi.
-\`There's Many More!!! Just Type \`Commands\ \`to get all Commands List!\`
-*
-Other Crazie Backup Commands:
--**\`Silent:\`**
--**\`Image:\`**
--**\`Story:\`** : [Contains Child Commands, So please write: *\`Story\`* first]
+      -**\`Image:\`** Prompt...
+         This allows you to Generate Images with the AI Models present to us. Example: Image: Create an Image of an Elephant drinking Alcohol 💀✍️🔥.
 
-We made the world's first Super Advanced Error Handling System (AEHS) especifically for BiVi Bot released in *\`BiVi Unstable v1.1.7\`*
-Hence, If you get any error in the Message Generation then write:
+      -**\`Search:\`** prompt...
+         This allows you to fetch data present in the WEB Internet using the Gemini Models. Example: Search: Search and tell me what is the price of Iphone 69 pro max 💀.
+      
+      Note: The *Prompt* will be replaced by your Input.
 
-**\`*Force:** Prompt_here\`*
-
-Want to connect to Developer or want to Report or give Feedback? Email us at: support@bivi.online
-We would be happy to listen from you!
-
-Message Fetched from Server and Sent in:`
+      Current BiVi Version: ${version_info}`
 }
 
-const command = { "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo,'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'owndetails': unfinished, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verinfo": version_info, "version": version_info, "ver": version_info , "commands": commands, "details" : botInfo, "developer": unfinished}
+const command = { "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo,'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'owndetails': unfinished, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verinfo": () => version_info(), "version": () => version_info(),"versioninfo": () => version_info(), "commands": () => commands(), "details" : botInfo, "developer": unfinished, "specialcommands": SpecialCommands}
 
-const commands_arr= ["delete this", "delete", "serverstatus", "server status", "clear", "yes","no", "cls", "clear", "story", "stories", "exit"]
+const commands_arr= ["delete this", "delete", "serverstatus", "server status", "clear", "yes","no", "cls", "clear", "story", "stories", "exit", "1"]
 
 
 
