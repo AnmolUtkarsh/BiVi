@@ -1,2 +1,2 @@
-const version = "BiVi v1.0.5 Unstable"
+const version = "BiVi v1.2.6 Stable [AIO]"
 module.exports = { version }

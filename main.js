@@ -41,8 +41,12 @@ const main = async (mess, client = null) => {
 		//     return;
 		// }
 
-		const value = filt(mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || mess.content)
+		const raw =
+			mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+			mess.content ||
+			"";
 
+		const value = filt(raw);
 		if (session?.type === "Story_Setup") {
 			session.createdAt = Date.now()
 			sessions.set(userId, session);

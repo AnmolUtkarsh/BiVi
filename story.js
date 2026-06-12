@@ -27,35 +27,30 @@ const story1 = [[
 ]];
 const WillFam1 = [
     [
-        "Title: Willson Family [*Vol 1*][*Part 1*]", "Published by: Abhijnan", "Story Genre: Explicit-Entertainment", "Volume: 1/10", "Part: 1/10", "Published at: 02-06-2026 12:43am",
+        "Title: Willson Family [*Vol 1*][*Part 1*]", "Published by: Abhijnan", "Story Genre: Explicit-Entertainment", "Volume: 1/10", "Part: 1/10", "Characters: \nWillson [Chicken], \nWillson's Wife [Wife of Willson[Chicken]], \nWillson Jr. [Child of Willson[Chicken]]", "Published at: 02-06-2026 12:43am",
     ],
     [
-        "Willson's wife: ... willson hasn't been picking up my call recently...",
-        "Willson's wife: I wonder what happed since there was a huge flood at his work place KFC...",
-        "Willson's wife: I wonder if he's okay.",
+        "Willson's Wife: Willson hasn't been picking up my call recently 😭...\nI wonder....what happed since there was a huge flood at his work place KFC...I wonder if he's okay. 🐔😭",
 
-        "willson jr.: Mommy whens Daddy going to return,",
-        "willson jr.: I want to play with him",
-        "willson jr.: I am lonely.",
+        "Willson Jr.: Mommy whens Daddy's going to return?, I want to play with him! 😭😭\nI am Feeling Lonely 😭💔.",
 
-        "Willson's wife: ... Dont worry Son, even mommy feels lonely without daddy at night,",
-        "Willson's wife: imagine spending nights with a Cucumber even after marriege....",
-        "Willson's wife: I am Sure he's fine my son.",
+        "Willson's Wife: ...Dont worry Son, even mommy feels lonely...without daddy at night 💔,",
+        "Willson's wife: Imagine spending nights with a Cucumber even after marriage...🥒🤌🏻😭,\n Well, I am Sure he's fine my son...",
 
-        "willson jr.: ... Mommy what about cucumber?",
+        "Willson Jr.: _(In Low Volume)_ ...Mommy what about Cucumber...💀🥒⁉️",
 
-        "Willson's wife: ... You and your's is too small Son,",
-        "Willson's wife: you will understand once you grow older.",
+        "Willson's Wife: ... You and your's is too small Son...🤏🏻,",
+        "Willson's Wife: you will understand once you grow older...",
 
-        "wisson jr: Okay mom... (momy's been acting very weird since daddy left... why does she takes cucumbers to her room every night..)...",
-        "wisson jr: Well I guess I will go sleep, its already late."
+        "Willson Jr.: Okay mom... \n\n _(Thinking: Mommy's been acting very lonely since Daddy left...why does she takes cucumbers to her room every night...🤨🥒⁉️)_",
+        "Willson Jr.: Well I guess I will go sleep, its already late."
     ]
 ];
 
 
 
 async function storyplay(mess, storys, num = 15, sessions) {
-    sessions.set(mess.author.id, { type: "Playing_Story" });
+    sessions.set((mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id), { type: "Playing_Story" });
     if (!isNaN(num)) {
 
         if (num < 15 || num > 60) {
@@ -65,11 +60,19 @@ async function storyplay(mess, storys, num = 15, sessions) {
             num *= 1000;
             const story = [storys[0], [...storys[1], "Story Ends Here..."]];
             await indi_reply(mess, `Story:
-${story[0][0]}\n${story[0][1]}\n${story[0][2]}\n${story[0][3]} , ${story[0][4]}\n${story[0][5]}\nTotal Time: *${((num / 1000) * story[1].length).toFixed(2)}*s or *${((((num / 1000) / 60) * story[1].length)).toFixed(2)}*min
+${story[0][0]}\n${story[0][1]}\n${story[0][2]}\n${story[0][3]} , ${story[0][4]}\n${story[0][5]}\n${story[0][6]}\nTotal Time: *${((num / 1000) * story[1].length).toFixed(2)}*s or *${((((num / 1000) / 60) * story[1].length)).toFixed(2)}*min
 ${story[0][0]}
 Selected Time Duration: ${(num / 1000).toFixed(2)}s OR ${((num / 1000) / 60).toFixed(2)}min
 
-${story[0][0]} Story is Starting in 15 Seconds...`)
+${story[0][0]} Story is Starting in 15 Seconds...
+Read: We have entered few Commands for Story Mode: Start/Play/Resume, Pause, Stop, Restart
+
+Start/Play/Resume -> For Starting after Pause.
+Pause -> For Pausing the Story for almost 10 mins, after than timeout!
+Stop -> Permanently Stop the Story for that Session!
+Restart -> Restarting the Story.
+
+In between the Story if you write External Commands, it will not work for the User who initiated this Story, For everybody else the external commands will work!`)
             let st = setTimeout(() => {
                 let i = 0;
                 
@@ -79,11 +82,11 @@ ${story[0][0]} Story is Starting in 15 Seconds...`)
 
 
                 const interval2 = setInterval(() => {
-                    const currentSession = sessions.get(mess.author.id);
+                    const currentSession = sessions.get(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id);
 
                 if(!currentSession || currentSession.type == "Stopped"){
                     clearInterval(interval2);
-                    sessions.delete(mess.author.id);
+                    sessions.delete(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id);
                     return;
                 }
                 if(!currentSession || currentSession.type == "Paused"){
@@ -93,7 +96,7 @@ ${story[0][0]} Story is Starting in 15 Seconds...`)
                 if (currentSession.type == "Restart"){
                     
                     i = 0;
-                    sessions.set(mess.author.id,{
+                    sessions.set(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id,{
                         type: "Playing_Story"
                     })
                     return;
@@ -103,7 +106,7 @@ ${story[0][0]} Story is Starting in 15 Seconds...`)
                     
                     if (i >= story[1].length) {
                         clearInterval(interval2);
-                        sessions.delete(mess.author.id)
+                        sessions.delete(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id)
                         return;
                     }
                     indi_reply(mess, String(story[1][i]));
