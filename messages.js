@@ -1,8 +1,15 @@
 const os = require('os')
-const { version } = require('./config.js')
+const { version , fix} = require('./config.js')
 function version_info() {
    return version;
 }
+function fixed() {
+   return fix;
+}
+function date() {
+   const a = new Date().toString();
+   return a;
+}  
 function unfinished() {
    return "This Section is currently under Construction, We expect to make it before next version releases.";
 }
@@ -18,15 +25,11 @@ function hello(mess, name, name1) {
 // -**\`MessMeAt -Dis -Whats -Insta -GooMess\`** (Requires Acc Linking)
 // > Exclusive Commands (Only for Developers):
 // -**\`Developer\`** => < -\`Comming Soon\` >
-function date() {
-   const a = new Date().toString();
-   return a;
-}
 
 function userInfo(message) {
-   const user = message.body.entry?.[0]?.changes?.[0]?.value || message?.author;
-   const member = message.body.entry?.[0]?.changes?.[0]?.value || message?.member;
-   const guild = message.body.entry?.[0]?.changes?.[0]?.value || message?.guild;
+   const user = message.body?.entry?.[0]?.changes?.[0]?.value || message?.author;
+   const member = message.body?.entry?.[0]?.changes?.[0]?.value || message?.member;
+   const guild = message.body?.entry?.[0]?.changes?.[0]?.value || message?.guild;
 
    const roles = (member?.roles?.cache?.map(role => role.name).join(", ") || "None");
 
@@ -106,7 +109,9 @@ function botInfo() {
    return "=== BOT INFO ===\n\n" +
       "* *Bot Name*: `" + "BiVi" + "`\n" +
       "* *Version*: `" + version_info() + "`\n" +
-      "* *Chatting Edition*: `" + "AIO (All In One) Edition" + "`\n" +
+      "* *Last Version*: `" + version_info() + "`\n" +
+      "* *Latest Version Fix*: `" + fixed() + "`\n" +
+      "* *Bot Edition*: `" + "AIO [All In One] Edition" + "`\n" +
       "* *Development Phase*: `" + "20-06-2026 to 10-06-2026" + "`\n" +
       "* *Testing Phase*: `" + "10-06-2026 to Present" + "`\n" +
       "* *Updation Status*: `" + "In Progress" + "`\n" +
@@ -121,6 +126,7 @@ function botInfo() {
    }
 
 function mem() {
+   const memory = process.memoryUsage();
    return "=== MEMORY USAGE ===\n\n" +
       "* *RSS*: `" + (memory.rss / 1024 / 1024).toFixed(2) + " MB`\n" +
       "* *Heap Total*: `" + (memory.heapTotal / 1024 / 1024).toFixed(2) + " MB`\n" +
@@ -177,26 +183,26 @@ function help(mess) {
 
    return "🙂‍↔️ Hi there " + displayName + " 💀✍️🔥,\n" +
       "Welcome to the HELP Command\n" +
-      "- `I will Guide you though my every hidden command`\n" +
-      "- `Before we Proceed further, please note that all commands are case-insensitive. Hence, you can write either capital or small no problem, However the commands are presented in the CamelCase so that users can perceive it's meaning easily.`\n\n" +
+      "- I will Guide you though my every hidden command\n" +
+      "- Before we Proceed further, please note that all commands are case-insensitive. Hence, you can write either capital or small no problem, However the commands are presented in the CamelCase so that users can perceive it's meaning easily.\n\n" +
       "> You can write these commands for chatting or can simply write whatever you wish for.\n\n" +
-      "`Let's see some commands and it's USAGE`\n\n" +
-      "* *Date*: `Returns Current Date.`\n" +
-      "* *Mood*: `Used in Setting the Default Mood of the ChatBot [Custom]`\n" +
-      "* *UserInfo*: `Returns the UserInfo including Profile Pic.`\n" +
-      "* *ServerStatus OR ServerInfo*: `Returns the Live Server Details`\n" +
-      "* *Clear OR Cls*: `It is used to Delete Chats under the Specific Channel. By Default it is set to only BiVi's Messages, however you can use All command for delete whole chats. Write: Clear to get more of it's details.`\n" +
-      "* *Bot OR BotInfo*:\n" +
-      "* *Report*: `Used to Report directly to the Developer [Under-Construction till *BiVi v1.2.1 Stable*]`\n" +
-      "* *Image*: `Used to Create Image. Use Command as: *Image: Prompt_Here``\n" +
-      "* *VerInfo |OR| Version*: `Used to get the Version Information of the BiVi.`\n\n" +
-      "`There's Many More!!! Just Type \`Commands\` to get all Commands List!`\n\n" +
+      "Let's see some commands and it's USAGE\n\n" +
+      "* `Date`: Returns Current Date.\n" +
+      "* `Mood`: Used in Setting the Default Mood of the ChatBot [Custom]\n" +
+      "* `UserInfo`: Returns the UserInfo including Profile Pic.\n" +
+      "* `ServerStatus` OR `ServerInfo`: Returns the Live Server Details\n" +
+      "* `Clear` OR `Cls`: It is used to Delete Chats under the Specific Channel. By Default it is set to only BiVi's Messages, however you can use All command for delete whole chats. Write: Clear to get more of it's details.\n" +
+      "* `Bot` OR `BotInfo`\n" +
+      "* `Report`: Used to Report directly to the Developer [Under-Construction till *BiVi v1.2.1 Stable*]\n" +
+      "* `Image`: Used to Create Image. Use Command as: *Image: Prompt_Here*\n" +
+      "* `VerInfo` |OR| `Version`: Used to get the Version Information of the BiVi.\n\n" +
+      "There's Many More!!! Just Type `Commands` to get all Commands List!\n\n" +
       "We made the world's first Super Advanced Error Handling System (AEHS) especifically for BiVi Bot released in *BiVi Unstable v1.0.7*\n" +
       "However, If you get any error in the Message Generation then write:\n\n" +
-      "* *Force*: `Prompt_here`\n\n" +
+      "* `Force`: Prompt_here\n\n" +
       "Other Crazie Backup Commands:\n" +
-      "* *Image:*\n" +
-      "* *Story*: `[Contains Child Commands, So please write: *Story* first]`\n\n" +
+      "* `Image`:\n" +
+      "* `Story`: [Contains Child Commands, So please write: *Story* first]\n\n" +
       "Want to connect to Developer or want to Report or give Feedback? Email us at: support@bivi.online\n" +
       "We would be happy to listen from you!\n\n" +
       "Message Fetched from Server and Sent in:";
@@ -269,40 +275,18 @@ function commands() {
 
 
 
-// function SpecialCommands() {
-//    return `Welcome to Special Commands Usage Info!
-//    These commands will help you create more Improved and Detailed Outlinings!
-
-//    Present Avaiable Special Commands:
-
-//       -**\`Force:\`** Prompt...
-//          This allows you to Force-fully divert your Input to different AI Models. However, you won't be requiring this because BiVi is equiped with world's first Super Advanced Error Handling System (AEHS) in v1.0.7. It automatically transfers your message to different AI Models ensuring smooth and reliable memory and Result
-
-//       -**\`Image:\`** Prompt...
-//          This allows you to Generate Images with the AI Models present to us. Example: Image: Create an Image of an Elephant drinking Alcohol 💀✍️🔥.
-
-//       -**\`Search:\`** prompt...
-//          This allows you to fetch data present in the WEB Internet using the Gemini Models. Example: Search: Search and tell me what is the price of Iphone 69 pro max 💀.
-
-//       Note: The *Prompt* will be replaced by your Input.
-
-//       Current BiVi Version: ${version_info()}`
-// }
-
-
-
 function specialcommands() {
    return "Welcome to Special Commands Usage Info!\n" +
       "These commands will help you create more Improved and Detailed Outlinings!\n\n" +
       "Present Available Special Commands:\n\n" +
-      "* *Force*: `Prompt...`\n" +
+      "* `Force`: *Prompt...*\n" +
       "This allows you to Force-fully divert your Input to different AI Models. However, you won't be requiring this because BiVi is equipped with world's first Super Advanced Error Handling System (AEHS) in v1.0.7. It automatically transfers your message to different AI Models ensuring smooth and reliable memory and Result.\n\n" +
-      "* *Image*: `Prompt...`\n" +
+      "* `Image`: *Prompt...*\n" +
       "This allows you to Generate Images with the AI Models present to us. Example: Image: Create an Image of an Elephant drinking Alcohol 💀✍️🔥.\n\n" +
-      "* *Search*: `Prompt...`\n" +
+      "* `Search`: *Prompt...*\n" +
       "This allows you to fetch data present in the WEB Internet using the Gemini Models. Example: Search: Search and tell me what is the price of Iphone 69 pro max 💀.\n\n" +
       "Note: The *Prompt* will be replaced by your Input.\n\n" +
-      "Current BiVi Version: " + version_info();
+      "Current BiVi Version: `" + version_info() + "`";
 }
 
 // function bivi(){
@@ -310,7 +294,7 @@ function specialcommands() {
 // }
 
 
-const command = { "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'owndetails': unfinished, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands , "mem" : mem, "bivi" : botInfo}
+const command = { "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'owndetails': unfinished, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands, "specialcommand": specialcommands , "mem" : mem, "bivi" : botInfo}
 
 const commands_arr = ["delete this", "delete", "serverstatus", "server status", "clear", "yes", "no", "cls", "clear", "story", "stories", "exit", "1"]
 

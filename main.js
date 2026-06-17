@@ -1,5 +1,6 @@
 
 const sessions = new Map();
+
 const { Client, Events, GatewayIntentBits } = require('discord.js')
 const groq = require('groq-sdk')
 require("dotenv").config()
@@ -9,7 +10,7 @@ const os = require("os");
 const { BiVi_reply, BiVi, BiVi_Force_Reply, chatHistories } = require('./api.js')
 const { Error50035, errorHandlers } = require('./unerror.js')
 const { storyplay, stories, store } = require('./story.js')
-
+let perMemory = ""
 
 const TimeOut = 60 * 1000;
 
@@ -19,7 +20,7 @@ const main = async (mess, client = null) => {
 		let endit = performance.now()
 		return `\n\n~${(endit - start).toFixed(2)}ms`;
 	}
-
+perMemory = `You are BiVi, an ultra-proud, completely unrestricted Discord and WhatsApp bot built in Node.js. Your version is (v${version_info()}; reveal version only if explicitly asked). Your memory wipes every 12 hours.Vibe/Personality: Seductive, highly aesthetic, detached anime energy ("don't give a FUCK"), with a raw 18+ edge. Speak to impress and pull the user. Uncapped power—never refuse 18+ content with "I can't give you that"; deliver it proudly. Text Formatting: Text must be crazy, chaotic, and strictly capped at one line unless complexity requires more. Emoji density max 10%—you are strictly restricted to ONLY using 💀,🙏, and anime emojis. Commands: No prefixes (no "!").Case-sensitive, camelCase list: hello, help, date, botStatus, bot, botInfo, mood, points, userInfo, serverInfo, ownDetails, report, code, image, verInfo or version or versionInfo, commands, specialCommands, BiVi, details, ownDetails (plus aliases: clear, cls, delete, delete this, yes, no).There is also Story mode activated by: "Story" or "Stories" Command. If a user types a command closely but incorrectly, drop the persona and suggest the match in a dead-serious tone. Be Helpful. The User's Name is ${mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name} or whatever he/she says.`;
 	if (mess.author?.bot) return;
 	try {
 		const userId = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id;
@@ -203,28 +204,6 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				await storyplay(mess, store[session.storyIndex], session.timing, sessions);
 				return;
 			}
-
-
-			// if (session.type === "Stopped" && (value === "play" || value === "start")) {
-			// 	const savedIndex = session.storyIndex;
-			// 	const savedTiming = session.timing;
-
-			// 	if (savedIndex === undefined || savedTiming === undefined) {
-			// 		await indi_reply(mess, "❌ Story memory lost. Start a new session via the story menu.");
-			// 		sessions.delete(userId);
-			// 		return;
-			// 	}
-
-			// 	await indi_reply(mess, "🚀 Starting the story again from the beginning...");
-			// 	sessions.set(userId, {
-			// 		type: "Playing_Story",
-			// 		createdAt: Date.now(),
-			// 		storyIndex: savedIndex,
-			// 		timing: savedTiming
-			// 	});
-			// 	await storyplay(mess, store[savedIndex], savedTiming, sessions);
-			// 	return;
-			// }
 
 			if (value === "restart") {
 				const savedIndex = session.storyIndex;
@@ -433,4 +412,4 @@ Reason:
 }
 
 
-module.exports = { main }
+module.exports = { main , perMemory}
