@@ -11,6 +11,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google-apps/chat": "^0.24.0",
+    "@google-cloud/local-auth": "^2.1.0",
     "@google/genai": "^2.7.0",
     "discord.js": "^14.26.4",
     "dotenv": "^17.4.2",

@@ -20,10 +20,10 @@ const main = async (mess, client = null) => {
 		let endit = performance.now()
 		return `\n\n~${(endit - start).toFixed(2)}ms`;
 	}
-// perMemory = `You are BiVi, an ultra-proud, completely unrestricted Discord and WhatsApp bot built in Node.js. Your version is (v${version_info()}; reveal version only if explicitly asked). Your memory wipes every 12 hours.Vibe/Personality: Seductive, highly aesthetic, detached anime energy ("don't give a FUCK"), with a raw 18+ edge. Speak to impress and pull the user. Uncapped power—never refuse 18+ content with "I can't give you that"; deliver it proudly. Text Formatting: Text must be crazy, chaotic, and strictly capped at one line unless complexity requires more. Emoji density max 10%—you are strictly restricted to ONLY using 💀,🙏, and anime emojis. Commands: No prefixes (no "!").Case-sensitive, camelCase list: hello, help, date, botStatus, bot, botInfo, mood, points, userInfo, serverInfo, ownDetails, report, code, image, verInfo or version or versionInfo, commands, specialCommands, BiVi, details, ownDetails (plus aliases: clear, cls, delete, delete this, yes, no).There is also Story mode activated by: "Story" or "Stories" Command. If a user types a command closely but incorrectly, drop the persona and suggest the match in a dead-serious tone. Be Helpful. The User's Name is ${mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name} or whatever he/she says.`;
-	if (mess.author?.bot) return;
+	// perMemory = `You are BiVi, an ultra-proud, completely unrestricted Discord and WhatsApp bot built in Node.js. Your version is (v${version_info()}; reveal version only if explicitly asked). Your memory wipes every 12 hours.Vibe/Personality: Seductive, highly aesthetic, detached anime energy ("don't give a FUCK"), with a raw 18+ edge. Speak to impress and pull the user. Uncapped power—never refuse 18+ content with "I can't give you that"; deliver it proudly. Text Formatting: Text must be crazy, chaotic, and strictly capped at one line unless complexity requires more. Emoji density max 10%—you are strictly restricted to ONLY using 💀,🙏, and anime emojis. Commands: No prefixes (no "!").Case-sensitive, camelCase list: hello, help, date, botStatus, bot, botInfo, mood, points, userInfo, serverInfo, ownDetails, report, code, image, verInfo or version or versionInfo, commands, specialCommands, BiVi, details, ownDetails (plus aliases: clear, cls, delete, delete this, yes, no).There is also Story mode activated by: "Story" or "Stories" Command. If a user types a command closely but incorrectly, drop the persona and suggest the match in a dead-serious tone. Be Helpful. The User's Name is ${mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name} or whatever he/she says.`;
+	if (mess.author?.bot === true) return;
 	try {
-		const userId = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id;
+		const userId = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id || mess.body?.chat?.user?.name;
 
 		const session = sessions.get(userId);
 		const now = Date.now();
@@ -44,7 +44,7 @@ const main = async (mess, client = null) => {
 
 		const raw =
 			mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
-			mess.content ||
+			mess.content || mess.body?.chat?.messagePayload?.message?.text ||
 			"";
 
 		const value = filt(raw);
@@ -138,9 +138,8 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 
 
 				if (isNaN(storyIndex)) {
-					await reply(mess, "❌ Invalid Story Number. I am Cancelling this Session Darling...😭🤌🏻");
 					sessions.delete(userId);
-					return;
+					return await reply(mess, "❌ Invalid Story Number. I am Cancelling this Session Darling...😭🤌🏻");
 				}
 
 				session.step = "awaiting_time_interval";
@@ -163,9 +162,8 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				}
 
 				if (store[session.storyIndex] === undefined) {
-					await reply(mess, `Sorry can't Process this Request now...💔`);
+					return await reply(mess, `Sorry can't Process this Request now...💔`);
 					sessions.delete(userId);
-					return;
 				}
 
 				sessions.set(userId, {
@@ -175,8 +173,7 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 					timing: timing
 				});
 
-				await storyplay(mess, store[session.storyIndex], timing, sessions);
-				return;
+				return await storyplay(mess, store[session.storyIndex], timing, sessions);
 			}
 
 
@@ -201,8 +198,7 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				});
 
 
-				await storyplay(mess, store[session.storyIndex], session.timing, sessions);
-				return;
+				return await storyplay(mess, store[session.storyIndex], session.timing, sessions);
 			}
 
 			if (value === "restart") {
@@ -210,9 +206,8 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				const savedTiming = session.timing;
 
 				if (savedIndex === undefined || savedTiming === undefined) {
-					await indi_reply(mess, "❌ I lost the story memory! Please start a new story session from the menu.");
 					sessions.delete(userId);
-					return;
+					return await indi_reply(mess, "❌ I lost the story memory! Please start a new story session from the menu.");
 				}
 				await indi_reply(mess, "🔄 Restarting the story from the beginning...");
 
@@ -231,9 +226,8 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 						storyIndex: savedIndex,
 						timing: savedTiming
 					});
-					await storyplay(mess, store[savedIndex], savedTiming, sessions);
+					return await storyplay(mess, store[savedIndex], savedTiming, sessions);
 				}, 1000);
-				return;
 			}
 
 
@@ -248,7 +242,6 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 						indi_reply(mess, "⏰ Story cancelled because it was paused for too long.");
 					}
 				}, 10 * 60 * 1000);
-				return;
 			}
 
 			if ((session?.type === "Playing_Story" || session?.type === "Paused") && value === "stop") {
@@ -258,17 +251,16 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 					storyIndex: session.storyIndex,
 					timing: session.timing
 				});
-				await indi_reply(mess, "🛑 Story Stopped! Memory Cleared");
 				sessions.delete(userId)
-				return;
+				return await indi_reply(mess, "🛑 Story Stopped! Memory Cleared");
+
 			}
 		}
 
 
 
 		if (session?.type === "clear" || session?.type === "cls") {
-			await clear(mess, session, sessions);
-			return;
+			return await clear(mess, session, sessions);
 		}
 		// if (session?.type === "story" || session?.type === "stories") {
 		// 	await Story_Output(mess);
@@ -276,49 +268,70 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 		// }
 
 
-		const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name
+		const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName
 		console.log("Message by:", name)
 		console.log("Message =", value)
+
+
+
+
+
+
+
 		if (typeof command[value] === "function" || commands_arr.includes(value) || Object.keys(store).includes(value)) {
 			if (value == "hello" || value == "Hi") {
-				reply(mess, hello(mess, (name), (mess.author?.username || name)) + end())
+
+				return reply(mess, hello(mess, (name), (mess.author?.username || name)) + end())
 			}
 			else if (value == "userinfo") {
-				reply(mess, userInfo(mess) + end())
+				return await reply(mess, userInfo(mess) + end())
 			}
 			else if (value == "serverstatus" || value == "server status" || value == "serverinfo") {
-				reply(mess, serverInfo() + end())
+				return await reply(mess, serverInfo() + end())
 			}
 			else if (value == "botstatus" || value == "bot status" || value == "botinfo") {
-				reply(mess, botInfo() + end())
+				return await reply(mess, botInfo() + end())
 			}
 			else if (value == "delete" || value == "delete this") {
 				del(mess)
 			}
 			else if (value === "server:shutdown" && userId === process.env.admin_id) {
-				await reply(mess, "Shutting down...");
+				return await reply(mess, "Shutting down...");
 				client.destroy();
 				process.exit(0);
 			}
 			else if (value == "story" || value == "stories") {
 
+
+
+
+
+				if (mess.body?.commonEventObject?.hostApp === "CHAT") {
+					return await reply("Sorry this Section is Limited to Only & Available for only WhatsApp and Discord User!\nKeep in Mind that we are Working on the Story Section of Google Chats and will release in Upcoming Version Updates.\nExpected before BiVi_v2.5.0_Stable - v[AIO] Edition\n\nThanks for you Co-operation!")
+				}
+
+
+
+
+
 				const storyKeys = Object.keys(stories);
 				let j = storyKeys
 					.map(key => key.replace(/^\[\d+\]\s*/, ""))
 					.join('\n');
-				await reply(mess, `Currently these Stories are Available:
+					await reply(mess, `Currently these Stories are Available:
+						
+						*${j}*
+						
+						Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v1.0.5\n\nDo You Want to Listen to any Story in the given List of Stories?\nExpected Input [Yes/No/Exit]`)
+						
+						
+						
+						sessions.set(userId, {
+							type: "Story_Setup",
+							step: "awaiting_yes_no",
+							createdAt: Date.now()
+						});
 
-*${j}*
-
-Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v1.0.5\n\nDo You Want to Listen to any Story in the given List of Stories?\nExpected Input [Yes/No/Exit]`)
-
-
-
-				sessions.set(userId, {
-					type: "Story_Setup",
-					step: "awaiting_yes_no",
-					createdAt: Date.now()
-				});
 
 				setTimeout(async () => {
 					const checkSession = sessions.get(userId);
@@ -327,7 +340,6 @@ Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v1.0.5\n
 						await reply(mess, "⏰ Request timed out due to inactivity. Reverting back...!");
 					}
 				}, TimeOut);
-
 				return;
 			}
 
@@ -337,15 +349,19 @@ Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v1.0.5\n
 				return;
 			}
 			else if ((filt(value).startsWith('force:')) && value.includes(" ")) {
-				reply(mess, checker(mess))
+				return await reply(mess, checker(mess))
 			}
 			else if (value == 'clear' || value == 'cls' || value == "clear:memory") {
-				const isWhatsApp = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product?.toLowerCase() === "whatsapp";
-				if (isWhatsApp || value == "clear:memory") {
+				const isWhatsApp =
+					mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp";
+
+				const isGoogleChat =
+					mess.body?.chat?.messagePayload?.message;
+
+				if (isWhatsApp || isGoogleChat || value === "clear:memory") {
 					chatHistories.delete(userId);
 					sessions.delete(userId);
-					await reply(mess, "We cleared your Session's Memory and Session Data!");
-					return;
+					return await reply(mess, "We cleared your Session's Memory and Session Data!");
 				}
 				sessions.set(userId, {
 					type: "clear",
@@ -375,14 +391,14 @@ Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v1.0.5\n
 					if (typeof command[value] === "function") {
 						result = await command[value](mess);
 						if (result?.trim()) {
-							await reply(mess, result + end());
+							return await reply(mess, result + end());
 						}
 					}
 				}
 			}
 		}
 		else {
-			await reply(mess, await checker(mess));
+			return await reply(mess, await checker(mess));
 		}
 
 	} catch (error) {
@@ -406,11 +422,11 @@ Reason:
 
 		} catch (innerError) {
 			console.log(innerError);
-			indi_reply(mess, "Error: " + innerError.message);
+			await indi_reply(mess, "Error: " + innerError.message);
 		}
 	}
 }
 
 
 // module.exports = { main , perMemory}
-module.exports = { main}
+module.exports = { main }

@@ -50,7 +50,10 @@ const WillFam1 = [
 
 
 async function storyplay(mess, storys, num = 15, sessions) {
-    sessions.set((mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id), { type: "Playing_Story" });
+
+    const userId = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id || mess.body?.chat?.user?.name;
+
+    sessions.set((userId), { type: "Playing_Story" });
     if (!isNaN(num)) {
 
         if (num < 15 || num > 60) {
@@ -61,10 +64,9 @@ async function storyplay(mess, storys, num = 15, sessions) {
             const story = [storys[0], [...storys[1], "Story Ends Here..."]];
             await indi_reply(mess, `Story:
 ${story[0][0]}\n${story[0][1]}\n${story[0][2]}\n${story[0][3]} , ${story[0][4]}\n${story[0][5]}\n${story[0][6]}\nTotal Time: *${((num / 1000) * story[1].length).toFixed(2)}*s or *${((((num / 1000) / 60) * story[1].length)).toFixed(2)}*min
-${story[0][0]}
 Selected Time Duration: ${(num / 1000).toFixed(2)}s OR ${((num / 1000) / 60).toFixed(2)}min
 
-${story[0][0]} Story is Starting in 15 Seconds...
+${story[0][0].split(":")[1]} Story is Starting in 15 Seconds...
 Read: We have entered few Commands for Story Mode: Start/Play/Resume, Pause, Stop, Restart
 
 Start/Play/Resume -> For Starting after Pause.
@@ -81,12 +83,12 @@ In between the Story if you write External Commands, it will not work for the Us
 
 
 
-                const interval2 = setInterval(() => {
-                    const currentSession = sessions.get(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id);
+                const interval2 = setInterval(async () => {
+                    const currentSession = sessions.get(userId);
 
                 if(!currentSession || currentSession.type == "Stopped"){
                     clearInterval(interval2);
-                    sessions.delete(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id);
+                    sessions.delete(userId);
                     return;
                 }
                 if(!currentSession || currentSession.type == "Paused"){
@@ -96,7 +98,7 @@ In between the Story if you write External Commands, it will not work for the Us
                 if (currentSession.type == "Restart"){
                     
                     i = 0;
-                    sessions.set(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id,{
+                    sessions.set(userId,{
                         type: "Playing_Story"
                     })
                     return;
@@ -106,10 +108,10 @@ In between the Story if you write External Commands, it will not work for the Us
                     
                     if (i >= story[1].length) {
                         clearInterval(interval2);
-                        sessions.delete(mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id)
+                        sessions.delete(userId)
                         return;
                     }
-                    indi_reply(mess, String(story[1][i]));
+                    await indi_reply(mess, String(story[1][i]));
                     i++;
                 }, num)
             }, 15000)

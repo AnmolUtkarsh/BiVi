@@ -1,3 +1,6 @@
-const version = "BiVi v1.2.6 Stable v[AIO]"
-const fix = "Userinfo and few other commands like Help and Hello fixed. Also code reduced to efficient.";
+const version = "BiVi_v1.5.0_Stable - [AIO] Edition"
+const fix = "\n* BiVi Finally Released on Google Chats too! *\n" +
+"* `OwnerInfo`, `DevInfo` Commands Installed and few other commands like `Help` and `Hello` fixed.\n" +
+"* Big Improvement in `UserInfo`.\n" +
+"* Code reduced for efficiency.\n"
 module.exports = { version , fix}
