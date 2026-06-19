@@ -421,7 +421,7 @@ function devinfo() {
       "* *Permission Type*: `system_admin`\n" +
 
       "* *Social Media*: `Private`\n" +
-      "* *Developer Words*: \nThis ChatBot is a Fine Tuned AI Powered ChatBot, and we created this Chatbot with a primary focus on Entertainment and no motive for charging any Money from you guys for using this! Even though this ChatBot is AI Powered but in the Development, only 0.5% of the Development was done using AI.\n\nAlso We are glad to Release a Public Statement that we are on our way to Develop a Public Customisable ChatBot for a Replacement for Discord and other ChatBots like Dyno and Rhythms. Currently we are working on other Projects for Free 24/7 Music Streaming Web Application Server Architecture.\nFor the past few days we were in our way to Setup our Servers, and we are fortunate enough that our Servers can Handle Upto 10000 Concurrent Users in Discord.";
+      "* *Words of Developer*: \nThis ChatBot is a Fine Tuned AI Powered ChatBot, and we created this Chatbot with a primary focus on Entertainment and no motive for charging any Money from you guys for using this! Even though this ChatBot is AI Powered but in the Development, only 0.5% of the Development was done using AI.\n\nAlso We are glad to Release a Public Statement that we are on our way to Develop a Public Customisable ChatBot for a Replacement for Discord and other ChatBots like Dyno and Rhythms. Currently we are working on other Projects for Free 24/7 Music Streaming Web Application Server Architecture.\nFor the past few days we were in our way to Setup our Servers, and we are fortunate enough that our Servers can Handle Upto 10000 Concurrent Users in Discord.";
 
 }
 
