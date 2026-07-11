@@ -317,6 +317,7 @@ async function bivi_image(mess) {
         const fullHistory = getFullHistory(userIDID);
 
         let url = `https://gen.pollinations.ai/image/${encodeURIComponent(temp_raw)}?model=${model}`;
+        console.log(process.env.pollination_ai);
         const response = await fetch(
           url,
           {

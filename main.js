@@ -7,7 +7,7 @@ const { indi_reply, filt, reply, del, clear, checker, fetching, indi_image_send,
 const { BiVi_reply, BiVi, BiVi_Force_Reply, chatHistories, BiVi_Search, group_reply } = require('./api.js')
 const { Error50035, errorHandlers } = require('./unerror.js')
 const { storyplay, stories, store } = require('./story.js');
-const { logToFullHistory, fullHistories } = require('./fullhistory.js')
+const { logToFullHistory, fullHistories, formatHistory } = require('./fullhistory.js')
 const { moods, getUserMood, userMoods } = require('./mood.js')
 const { languages, getUserLanguage, userLanguage } = require('./lang.js');
 const { isHistoryEnabled, historyFetch, userHistoryPrefs } = require('./history_save.js');
@@ -53,9 +53,6 @@ const main = async (mess, client = null) => {
 		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
 		mess.body?.chat?.messagePayload?.space?.name ||
 		userId;
-
-
-
 
 	try {
 
@@ -222,11 +219,12 @@ const main = async (mess, client = null) => {
 
 		if (value === "history" || value === "histories") {
 			const uhh = historyFetch(userId);
+			const impor = formatHistory(userId);
 			sessions.set(userId, {
 				type: "awaiting_his_yes_no",
 				createdAt: Date.now()
 			});
-			return await reply(mess, `Current History Status: \`${uhh}\`\n\nWith the Grace of BiVi 2.0.0 LTS Edition you can now change and set Whether you want to save you History or Not...\nYou can write: \`History:On\` or \`History:Off\`\n\nDo you want to change it?\n[Yes,No,Exit]`);
+			return await reply(mess, "Current History Status: `" + uhh + "`\n\nWith BiVi 2.0, you can now change and set Whether you want to save you History or Not...\nHistory:\n\n" + impor + "You can write: `History:On` or `History:Off`\n\nDo you want to change it? [`Yes`,`No`,`Exit`]");
 		}
 
 
@@ -908,11 +906,11 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 
 				if (platform === "whatsapp" || platform === "whatsapp_group") {
 
-					return await WhatsAppHelloCard(mess);
+					return await WhatsAppHelloCard(mess, name, mess.author?.username || name);
 				}
 
 				if (platform === "chat") {
-					return await GoogleChatHelloCard(mess);
+					return await GoogleChatHelloCard(mess, name, mess.author?.username || name);
 				}
 
 				logToFullHistory(

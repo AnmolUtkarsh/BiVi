@@ -31,7 +31,6 @@ function shorten(text, limit = 25) {
 
 
 
-
 function logToFullHistory(userId, chatId, userText, assistantText) {
   if (!isHistoryEnabled(userId)) return;
 
@@ -55,7 +54,19 @@ function logToFullHistory(userId, chatId, userText, assistantText) {
 
 
 
+function formatHistory(userId) {
+    const history = getFullHistory(userId);
+
+    if (!history.length) {
+        return "No conversation history found.";
+    }
+
+    return history.map(msg => {
+        const speaker = msg.role === "user" ? "User" : "BiVi";
+        return `${speaker}: "${msg.content}"`;
+    }).join("\n");
+}
 
 
 
-module.exports = { fullHistories, getFullHistory, shorten, logToFullHistory }
+module.exports = { fullHistories, getFullHistory, shorten, logToFullHistory , formatHistory}

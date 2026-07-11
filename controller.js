@@ -361,12 +361,13 @@ async function reply(mess, value) {
 //     const filter = m => m.author.id === mess.author.id;
 //     const timeCollected = await mess.channel.awaitMessages({ filter, max: 1, time: inter, errors: ['time'] });
 // }
-async function WhatsAppHelloCard(mess) {
+async function WhatsAppHelloCard(mess, name, name1) {
 
     const recipientId =
         mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
 
     if (!recipientId) return;
+
 const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
       ? `🙂‍↔️ Hi there ${name}`
       : `🙂‍↔️ Hi there ${name} aka ${name1}`;
@@ -432,7 +433,7 @@ const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === 
 }
 
 
-async function GoogleChatHelloCard(mess) {
+async function GoogleChatHelloCard(mess, name, name1) {
 const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
       ? `🙂‍↔️ Hi there ${name}`
       : `🙂‍↔️ Hi there ${name} aka ${name1}`;
