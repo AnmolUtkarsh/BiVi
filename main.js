@@ -7,7 +7,7 @@ const { indi_reply, filt, reply, del, clear, checker, fetching, indi_image_send,
 const { BiVi_reply, BiVi, BiVi_Force_Reply, chatHistories, BiVi_Search, group_reply } = require('./api.js')
 const { Error50035, errorHandlers } = require('./unerror.js')
 const { storyplay, stories, store } = require('./story.js');
-const { logToFullHistory, fullHistories, formatHistory } = require('./fullhistory.js')
+const { logToFullHistory, fullHistories, formatHistory, shorten } = require('./fullhistory.js')
 const { moods, getUserMood, userMoods } = require('./mood.js')
 const { languages, getUserLanguage, userLanguage } = require('./lang.js');
 const { isHistoryEnabled, historyFetch, userHistoryPrefs } = require('./history_save.js');
@@ -36,8 +36,8 @@ const main = async (mess, client = null) => {
 	const messageType =
 		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.type;
 	if (messageType && messageType !== "text" && messageType !== "interactive") {
-	return await reply(mess, "Sorry dear, We currently don't support other than Text Inputs!");
-}
+		return await reply(mess, "Sorry dear, We currently don't support other than Text Inputs!");
+	}
 	// const filtered = filt(raw1);
 
 	const userId = mess?.author?.id ||
@@ -149,31 +149,38 @@ const main = async (mess, client = null) => {
 			}
 		}
 
-		if (wantsSearch) {
-			try {
-				return await BiVi_Search(mess);
-			} catch (er) {
-				await indi_reply(mess, "Error in Searching on Internet.\nReason: Currently the Server Load is at it's peak.\nDiverting the Prompt to BiVi 2.0.");
-				return await reply(mess, checker(mess));
-			}
-		}
-
+		
 		// if (filtered.replace(/^\./, "").startsWith("image:")) {
-		// 	return await indi_image_send(mess);
-		// }
-		// if (filtered.replace(/^\./, "").startsWith("search:")) {
-		// 	return await BiVi_Search(mess);
-		// }
-
-
-		if (!isHistoryEnabled(userId)) {
-			fullHistories.delete(userId);
-			chatHistories.delete(userId);
-		}
-
-		const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName;
-		const value = filt(raw);
-
+			// 	return await indi_image_send(mess);
+			// }
+			// if (filtered.replace(/^\./, "").startsWith("search:")) {
+				// 	return await BiVi_Search(mess);
+				// }
+				
+				
+				if (!isHistoryEnabled(userId)) {
+					fullHistories.delete(userId);
+					chatHistories.delete(userId);
+				}
+				
+				const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName;
+				const value = filt(raw);
+				
+				
+				if (wantsSearch) {
+					try {
+						const result = await BiVi_Search(mess);
+						logToFullHistory(userId, chatId, value, shorten(result)
+						);
+						return await reply(mess, result);
+					} catch (er) {
+						await indi_reply(mess, "Error in Searching on Internet...");
+						logToFullHistory(userId, chatId, value, "Error in Searching on Internet..."
+						);
+						return await reply(mess, await checker(mess));
+					}
+				}
+				
 
 
 		if (
@@ -224,7 +231,7 @@ const main = async (mess, client = null) => {
 				type: "awaiting_his_yes_no",
 				createdAt: Date.now()
 			});
-			return await reply(mess, "Current History Status: `" + uhh + "`\n\nWith BiVi 2.0, you can now change and set Whether you want to save you History or Not...\nHistory:\n\n" + impor + "You can write: `History:On` or `History:Off`\n\nDo you want to change it? [`Yes`,`No`,`Exit`]");
+			return await reply(mess, "Current History Status: `" + uhh + "`\n\nWith BiVi 2.0, you can now change and set Whether you want to save you History or Not...\nHistory:\n\n" + impor + "\n\nYou can write: `History:On` or `History:Off`\n\nDo you want to change it? [`Yes`,`No`,`Exit`]");
 		}
 
 

@@ -239,10 +239,21 @@ async function BiVi_Search(mess) {
       model: "perplexity-fast",
       messages: messagePayload,
     });
-    const output = response.choices[0].message.content;
+    const output = response?.choices?.[0]?.message?.content;
 
-    history.push({ role: "user", content: String(text) });
-    history.push({ role: "assistant", content: output });
+    if (!output || !output.trim()) {
+      throw new Error("Search model returned an empty response.");
+    }
+
+    history.push({
+      role: "user",
+      content: String(text)
+    });
+
+    history.push({
+      role: "assistant",
+      content: output
+    });
 
     fullHistory.push({
       role: "user",
@@ -253,7 +264,6 @@ async function BiVi_Search(mess) {
       role: "assistant",
       content: shorten(output)
     });
-
 
     return output;
   } catch (error) {
@@ -292,16 +302,16 @@ async function bivi_image(mess) {
   const raw2 =
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
     mess.content || mess.body?.chat?.messagePayload?.message?.text ||
-    "";
+    "UNKNOWN";
   const userIDID =
     mess.author?.id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.chat?.messagePayload?.message?.sender?.name;
-  if (!filt(raw2).startsWith("image:")) return;
-
+  // if (!filt(raw2).startsWith("image:")) return;
+let temp_raw = filt(raw2);
   if (filt(raw2).startsWith("image:") || filt(raw2).startsWith(".image:")) {
-    const temp_raw = raw2.split(":").slice(1).join(":").trim();
-
+    temp_raw = raw2.split(":").slice(1).join(":").trim();
+}
     const modelsToTry = [
       "flux",
       "zimage",
@@ -352,7 +362,7 @@ async function bivi_image(mess) {
 
     throw new Error("All image models failed.");
   }
-}
+
 
 
 
@@ -445,7 +455,7 @@ async function BiVi(mess) {
     return await BiVi_Reply(mess);
   }
   catch (error) {
-    await reply(mess, `Error:${error.message}\nReplying with Force Command, Please Wait...`)
+    reply(mess, `Error:${error.message}\nReplying with Force Command, Please Wait...`)
 
     await reply(mess, `Force: ${text}`)
 
