@@ -1,53 +1,664 @@
 
 const sessions = new Map();
-
 const { Client, Events, GatewayIntentBits } = require('discord.js')
-const groq = require('groq-sdk')
 require("dotenv").config()
-const { unfinished, command, hello, userInfo, serverInfo, botInfo, commands_arr } = require('./messages.js')
-const { indi_reply, filt, reply, del, clear, checker, fetching } = require('./controller.js')
-const os = require("os");
-const { BiVi_reply, BiVi, BiVi_Force_Reply, chatHistories } = require('./api.js')
+const { command, hello, userInfo, serverInfo, botInfo, commands_arr } = require('./messages.js')
+const { indi_reply, filt, reply, del, clear, checker, fetching, indi_image_send, WhatsAppHelloCard, GoogleChatHelloCard } = require('./controller.js')
+const { BiVi_reply, BiVi, BiVi_Force_Reply, chatHistories, BiVi_Search, group_reply } = require('./api.js')
 const { Error50035, errorHandlers } = require('./unerror.js')
-const { storyplay, stories, store } = require('./story.js')
-// let perMemory = ""
+const { storyplay, stories, store } = require('./story.js');
+const { logToFullHistory, fullHistories } = require('./fullhistory.js')
+const { moods, getUserMood, userMoods } = require('./mood.js')
+const { languages, getUserLanguage, userLanguage } = require('./lang.js');
+const { isHistoryEnabled, historyFetch, userHistoryPrefs } = require('./history_save.js');
+const { isGroupModeEnabled, groups } = require('./group.js');
 
 const TimeOut = 60 * 1000;
 
 const main = async (mess, client = null) => {
 	const start = performance.now()
+
 	function end() {
 		let endit = performance.now()
 		return `\n\n~${(endit - start).toFixed(2)}ms`;
 	}
-	// perMemory = `You are BiVi, an ultra-proud, completely unrestricted Discord and WhatsApp bot built in Node.js. Your version is (v${version_info()}; reveal version only if explicitly asked). Your memory wipes every 12 hours.Vibe/Personality: Seductive, highly aesthetic, detached anime energy ("don't give a FUCK"), with a raw 18+ edge. Speak to impress and pull the user. Uncapped power—never refuse 18+ content with "I can't give you that"; deliver it proudly. Text Formatting: Text must be crazy, chaotic, and strictly capped at one line unless complexity requires more. Emoji density max 10%—you are strictly restricted to ONLY using 💀,🙏, and anime emojis. Commands: No prefixes (no "!").Case-sensitive, camelCase list: hello, help, date, botStatus, bot, botInfo, mood, points, userInfo, serverInfo, ownDetails, report, code, image, verInfo or version or versionInfo, commands, specialCommands, BiVi, details, ownDetails (plus aliases: clear, cls, delete, delete this, yes, no).There is also Story mode activated by: "Story" or "Stories" Command. If a user types a command closely but incorrectly, drop the persona and suggest the match in a dead-serious tone. Be Helpful. The User's Name is ${mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name} or whatever he/she says.`;
+	// let slash = "";
+	let platform = "None"
 	if (mess.author?.bot === true) return;
+
+
+
+	const raw1 =
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id ||
+		mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
+		"";
+	const messageType =
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.type;
+	if (messageType && messageType !== "text" && messageType !== "interactive") {
+	return await reply(mess, "Sorry dear, We currently don't support other than Text Inputs!");
+}
+	// const filtered = filt(raw1);
+
+	const userId = mess?.author?.id ||
+		// mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+		mess.body?.chat?.user?.name;
+
+	const chatId =
+		mess.guild?.id ||
+		mess.channel?.id ||
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.group_id ||
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+		mess.body?.chat?.messagePayload?.space?.name ||
+		userId;
+
+
+
+
 	try {
-		const userId = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id || mess.body?.chat?.user?.name;
+
+		if (mess.body?.commonEventObject?.hostApp === "CHAT") {
+			platform = 'chat';
+		}
+		else if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.group_id) {
+			platform = 'whatsapp_group';
+		}
+		else if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
+			platform = 'whatsapp';
+		}
+		else if (mess.author?.id) {
+			platform = 'discord';
+		}
+
+
+		const hasDotPrefix = raw1.startsWith(".");
+
+		// const userGroupMode =
+		// 	groups.get(`${chatId}:${userId}`)?.state === "Group_On";
+		// const groupAllMode =
+		// 	groups.get(chatId)?.state === "Group_All_On";
+
+
+
+
+
+		let raw = raw1;
+		const groupUser = groups.get(`${chatId}:${userId}`);
+		const groupAll = groups.get(chatId);
+		const userGroupMode = groupUser?.state === "Group_On";
+		const groupAllMode = groupAll?.state === "Group_All_On";
+		if (userGroupMode || groupAllMode) {
+			raw = raw1.startsWith(".")
+				? raw1.slice(1)
+				: raw1;
+		}
+		else if (raw1.startsWith(".")) {
+			raw = raw1.slice(1);
+		}
+
+
+		const isGroup =
+			platform === "whatsapp_group" ||
+			(
+				platform === "discord" &&
+				!mess.channel?.isDMBased()
+			) ||
+			(
+				platform === "chat" &&
+				mess.body?.chat?.messagePayload?.space?.spaceType === "SPACE"
+			);
+
+
+
+
+
+		if (
+			isGroup &&
+			!hasDotPrefix &&
+			!userGroupMode &&
+			!groupAllMode
+		) {
+			return;
+		}
+
+
+		const prompt = raw.trim().toLowerCase();
+
+		const wantsImage =
+			prompt.startsWith("image:") ||
+			prompt.startsWith("create image") ||
+			prompt.startsWith("create an image") ||
+			prompt.startsWith("generate image") ||
+			prompt.startsWith("generate an image") ||
+			prompt.startsWith("draw") ||
+			prompt.startsWith("make an image") ||
+			prompt.startsWith("make me an image") ||
+			prompt.includes(" image of ") ||
+			prompt.includes(" picture of ");
+
+		const wantsSearch =
+			prompt.startsWith("search:") ||
+			prompt.startsWith("search ") ||
+			prompt.startsWith("find ") ||
+			prompt.startsWith("look up ") ||
+			prompt.startsWith("lookup ");
+		if (wantsImage) {
+			try {
+				return await indi_image_send(mess);
+			} catch (e) {
+				return await reply(mess, "Error in Generating the Image.\nReason: Currently the Server Load is at it's peak.\nPlease try Again.");
+			}
+		}
+
+		if (wantsSearch) {
+			try {
+				return await BiVi_Search(mess);
+			} catch (er) {
+				await indi_reply(mess, "Error in Searching on Internet.\nReason: Currently the Server Load is at it's peak.\nDiverting the Prompt to BiVi 2.0.");
+				return await reply(mess, checker(mess));
+			}
+		}
+
+		// if (filtered.replace(/^\./, "").startsWith("image:")) {
+		// 	return await indi_image_send(mess);
+		// }
+		// if (filtered.replace(/^\./, "").startsWith("search:")) {
+		// 	return await BiVi_Search(mess);
+		// }
+
+
+		if (!isHistoryEnabled(userId)) {
+			fullHistories.delete(userId);
+			chatHistories.delete(userId);
+		}
+
+		const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName;
+		const value = filt(raw);
+
+
+
+		if (
+			groupAllMode &&
+			!commands_arr.includes(value) &&
+			typeof command[value] !== "function" &&
+			!Object.keys(store).includes(value)
+		) {
+			return await reply(
+				mess,
+				await group_reply(mess)
+			);
+		}
+		if (
+			value === "mode:groupall" ||
+			value === "groupallmode"
+		) {
+			if (!isGroup) {
+				return await reply(
+					mess,
+					"Group All Mode only works inside servers or group chats."
+				);
+			}
+		}
 
 		const session = sessions.get(userId);
+
+
+
 		const now = Date.now();
 		const longRunningStates = ["Playing_Story", "Paused", "Stopped"];
 
 		if (session && session.createdAt && !longRunningStates.includes(session.type)) {
 			if (now - session.createdAt > TimeOut) {
 				sessions.delete(userId);
-				await reply(mess, "⏰ Request timed out due to inactivity. Reverting back...!");
-				return;
+				return await reply(mess, "⏰ Request timed out due to inactivity. Reverting back...!");
 			}
 		}
-		// if (session && session.createdAt && (now - session.createdAt > TimeOut)) {
-		//     sessions.delete(userId);
-		//     await reply(mess, "⏰ Request timed out due to inactivity. Reverting back...!");
-		//     return;
-		// }
 
-		const raw =
-			mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
-			mess.content || mess.body?.chat?.messagePayload?.message?.text ||
-			"";
+		const inp = value.toLowerCase().trim();
+		const moodIndex = parseInt(inp);
+		const langIndex = parseInt(inp);
 
-		const value = filt(raw);
+		if (value === "history" || value === "histories") {
+			const uhh = historyFetch(userId);
+			sessions.set(userId, {
+				type: "awaiting_his_yes_no",
+				createdAt: Date.now()
+			});
+			return await reply(mess, `Current History Status: \`${uhh}\`\n\nWith the Grace of BiVi 2.0.0 LTS Edition you can now change and set Whether you want to save you History or Not...\nYou can write: \`History:On\` or \`History:Off\`\n\nDo you want to change it?\n[Yes,No,Exit]`);
+		}
+
+
+
+		if (session?.type === "awaiting_his_yes_no" && (value === "no" || value === "exit")) {
+			sessions.delete(userId);
+			return await reply(mess, "Okay, Reverting Back!");
+		}
+		if (session?.type === "awaiting_his_yes_no" && (value === "yes")) {
+			sessions.set(userId, {
+				type: "awaiting_final_his_yes_no",
+				createdAt: Date.now()
+			});
+
+			return await reply(mess, "Please Enter : `On` / `Off` OR `History:On` / `History:Off`");
+		}
+		if (session?.type === "awaiting_his_yes_no") {
+
+			sessions.delete(userId);
+			return reply(mess, "Invalid Input");
+		}
+		if ((session?.type === "awaiting_final_his_yes_no" && (value === "on"
+		)) || value === "history:on") {
+			// const temp1 = userHistoryPrefs.get(userId);
+			const c = historyFetch(userId);
+			if (c === "History_On") { return await reply(mess, "You History is Already turned On!") }
+			userHistoryPrefs.set(userId, { state: "History_On" })
+			sessions.delete(userId);
+			return await reply(mess, "We have turned on your History, but keep in mind that we don't Store any of your Data or Commands as this ChatBot isn't connected to any DataBase! Instead we depend on User Temporary Session Access Data....!");
+		}
+
+
+		if ((session?.type === "awaiting_final_his_yes_no" && (value === "off"
+		)) || value === "history:off") {
+
+			userHistoryPrefs.set(userId, { state: "History_Off" })
+			chatHistories.delete(userId);
+			fullHistories.delete(userId);
+			sessions.delete(userId);
+			return await reply(mess, "History has been turned off and your current session memory has been cleared!\nHowever, keep in mind that we don't Store any of your Data or Commands as this ChatBot isn't connected to any DataBase! Instead we depend on User Temporary Session Access Data....!");
+		}
+
+
+
+
+		if (value == "mode" || value == "modes") {
+			return await reply(mess, "Current we have these Modes:\n[1] Group Mode\n> For Activation write: `Mode:Group` or `GroupMode`\n\n[2] Group All Mode\n> For Activation write: `Mode:GroupAll` or `GroupAllMode`\n\n[3] StateLess Mode\n> For Activation write: `Mode:StateLess` or `StateLess`");
+		}
+
+
+		if (groupUser?.state === "Group_On" && value === "group:off") {
+			// groups.delete(userId);
+			groups.delete(`${chatId}:${userId}`);
+			sessions.delete(userId);
+			return await reply(mess, "✅ Group Mode has been turned off.");
+		}
+
+		if (groupAll?.state === "Group_All_On" && value === "groupall:off") {
+			// groups.delete(chatId);
+			sessions.delete(userId);
+			groups.delete(chatId);
+			return await reply(mess, "✅ Group All Mode has been turned off.");
+		}
+
+
+
+
+		if (value === "mode:group" || value === "groupmode") {
+
+			const group = groups.get(`${chatId}:${userId}`);
+			if (group?.state === "Group_On") {
+				sessions.delete(userId);
+				return await reply(mess, "✅ Group Mode is already enabled for you.");
+			}
+			// groups.set(userId, { state: "Group_On" })
+
+			// groups.set(userId, {
+			// 	state: "Group_On"
+			// });
+			groups.set(`${chatId}:${userId}`, {
+				state: "Group_On"
+			});
+
+			return await reply(mess, "You are Entering into Group Mode. Using this Mode, Writing '.' for *YOU* will be OPTIONAL.\nAll Your Messages will be transferred to BiVi itself!\nExample: ~.hello~ INSTEAD `hello`.\n\nYou can write: '`Group:Off`'");
+		}
+		if (value == "mode:groupall" || value === "groupallmode") {
+			sessions.set(userId, {
+				type: "awaiting_groupall_yes_no",
+				createdAt: Date.now()
+			});
+			return await reply(mess, "Please Confirm Whether You really want to enter into Group All Mode. Using this Mode, Writing '.' under this Space/Server will be OPTIONAL.\nExample: ~.hello~ INSTEAD `hello`.\n\nYou can write: '`GroupAll:Off`'")
+
+		}
+
+		if (session?.type === "awaiting_groupall_yes_no" && (value === "no" || value === "exit")) {
+			sessions.delete(userId);
+			return await reply(mess, "Okay, Reverting Back!");
+		}
+		if (session?.type === "awaiting_groupall_yes_no" && value === "yes") {
+			sessions.delete(userId);
+			if (!chatId) {
+				return await reply(
+					mess,
+					"Group All Mode only works inside servers or groups."
+				);
+			}
+			groups.set(chatId, {
+				state: "Group_All_On",
+				enabledBy: userId,
+			});
+
+			return await reply(mess, "✅ Group All Mode Enabled.");
+		}
+
+
+
+		if (value === "lang:clear" || value === "language:clear") {
+			userLanguage.delete(userId);
+			sessions.delete(userId);
+			return await reply(mess, "We cleared your Languages Preference and the Language is set to Default! [English].")
+		}
+
+
+		if (value === "lang" || value === "language") {
+			const currentLang = getUserLanguage(userId);
+
+			let text = "Currently Available Languages:\n\n";
+
+			for (const key in languages) {
+				text += `${languages[key]}\n`;
+			}
+
+			text += `\nDefault Language: \`English\`\nCurrent Language: \`${currentLang}\`\n`;
+			text +=
+				"\nDo you Want to Change the Language? : [Yes / No / Exit]";
+
+			sessions.set(userId, {
+				type: "awaiting_lang_yes_no",
+				createdAt: Date.now()
+			});
+
+			return await reply(mess, text);
+		}
+
+
+		if (session?.type === "awaiting_lang_yes_no" && (value === "no" || value === "exit")) {
+			sessions.delete(userId);
+			return await reply(mess, "Okay, Reverting Back!");
+		}
+		if (session?.type === "awaiting_lang_yes_no" && (!(value === "no" || value === "exit" || value === "yes"))) {
+			return await reply(mess, "Invalid Input!");
+		}
+
+		if (session?.type === "awaiting_lang_yes_no" && value === "yes") {
+			const currentLang = getUserLanguage(userId);
+			sessions.set(userId, {
+				type: "awaiting_lang_input",
+				createdAt: Date.now()
+			});
+
+			let text = "Currently Available Languages:\n\n";
+			for (const key in languages) {
+				text += `${key} : ${languages[key]}\n`;
+			}
+
+			text += `\nCurrently Selected: ${currentLang}`;
+			text += "\n\nType the Number of the Language or write `Lang:<name>` to select a language.\nFeature of `BiVi 2.0.0 LTS Edition`.";
+
+			return await reply(mess, text);
+		}
+
+
+		if (session?.type === "awaiting_lang_input") {
+
+			const langName = value
+				.split(":")[1]
+				?.trim()
+				?.toLowerCase();
+
+
+			if (!isNaN(langIndex) && languages[langIndex]) {
+				const selectedLang = languages[langIndex];
+				sessions.delete(userId);
+
+				userLanguage.set(userId, {
+					language: selectedLang,
+					setAt: Date.now()
+				});
+
+				return reply(mess, `✨ Language changed to *${selectedLang}* for the next 24 hours.\n\nYou can always write: \`Lang:clear\` to Set Default Language.`);
+			}
+
+
+
+
+
+
+			if (langName === "clear") {
+				userLanguage.delete(userId);
+				sessions.delete(userId);
+
+				return reply(
+					mess,
+					"✨ Language Session cleared and Language resetted to Default."
+				);
+			}
+
+
+			const langObj = Object.values(languages)
+				.find(m => m.toLowerCase() === langName);
+
+			if (!langObj) {
+				sessions.delete(userId);
+				return await reply(
+					mess,
+					`❌ Invalid Language name.\nCurrent Language: ${getUserLanguage(userId)}\nPlease try again.`
+				);
+			}
+
+
+			userLanguage.set(userId, {
+				language: langObj,
+				setAt: Date.now()
+			});
+
+			sessions.delete(userId);
+
+			return await reply(
+				mess,
+				`✨ Language changed to *${langObj}* for the next 24 hours.\n\nYou can always write: \`Lang:clear\` to Set \`Default\` Language.`
+			);
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		if (value === "mood:clear" || value === "moods:clear") {
+			userMoods.delete(userId);
+			sessions.delete(userId);
+			return await reply(mess, "We cleared your Mood Preference and the Mood is set to Default! [Asthetic]")
+		}
+
+		if (value === "mood" || value === "moods") {
+			const currentMood = getUserMood(userId);
+
+			let text = "Currently Available Moods:\n\n";
+
+			for (const key in moods) {
+				text += `${key} : ${moods[key].name}\n`;
+			}
+
+			text += `\nDefault Mood: \`Asthetic\`\nCurrent Mood: \`${currentMood}\`\n`;
+			text +=
+				"\nDo you Want to Change the Mood? : [Yes / No / Exit]";
+
+			sessions.set(userId, {
+				type: "awaiting_mood_yes_no",
+				createdAt: Date.now()
+			});
+
+			return await reply(mess, text);
+		}
+		if (session?.type === "awaiting_mood_yes_no" && (value === "no" || value === "exit")) {
+			sessions.delete(userId);
+			return await reply(mess, "Okay, Reverting Back!");
+
+		}
+		if (
+			session?.type === "awaiting_mood_yes_no" &&
+			value !== "yes" &&
+			value !== "no" &&
+			value !== "exit"
+		) {
+			return reply(mess, "Invalid Input");
+		}
+
+		if (session?.type === "awaiting_mood_yes_no" && value === "yes") {
+			const currentMood = getUserMood(userId);
+			sessions.set(userId, {
+				type: "awaiting_mood_input",
+				createdAt: Date.now()
+			});
+
+			let text = "Currently Available Moods:\n\n";
+			for (const key in moods) {
+				text += `${key}.${moods[key].name}\n`;
+			}
+
+			text += `\nCurrently Selected: ${currentMood}`;
+			text += "\n\nType the Number of the Mood or write `mood:<name>` to select a mood.\nFeature of `BiVi 2.0.0 LTS Series`.";
+
+			return await reply(mess, text);
+		}
+
+
+
+
+
+
+
+		if (
+			session?.type === "awaiting_mood_input" &&
+			(
+				value.startsWith("mood:") ||
+				!isNaN(moodIndex)
+			)
+		) {
+
+			const moodName = value
+				.split(":")[1]
+				?.trim()
+				?.toLowerCase();
+			if (
+				!isNaN(moodIndex) &&
+				moodIndex >= 1 &&
+				moodIndex <= Object.keys(moods).length
+			) {
+				if (!isNaN(moodIndex) && moods[moodIndex]) {
+					const selectedMood = moods[moodIndex].name;
+					sessions.delete(userId);
+
+					userMoods.set(userId, {
+						mood: selectedMood,
+						setAt: Date.now()
+					});
+
+					return reply(mess, `✨ Mood changed to *${selectedMood}* for the next 24 hours.\n\nYou can always write: \`Mood:clear\` to Set Default Mood.`);
+				}
+			}
+
+
+
+
+
+			if (moodName === "clear") {
+				userMoods.delete(userId);
+				sessions.delete(userId);
+
+				return reply(
+					mess,
+					"✨ Mood Session cleared and Mood resetted to Default."
+				);
+			}
+
+
+			const moodObj = Object.values(moods)
+				.find(m => m.name.toLowerCase() === moodName);
+
+			if (!moodObj) {
+				sessions.delete(userId);
+				return await reply(
+					mess,
+					`❌ Invalid mood name.\nCurrent Mood: ${getUserMood(userId)}\nPlease try again.`
+				);
+			}
+			// if (!mood) {
+			// 	sessions.delete(userId);
+			// 	return await reply(
+			// 		mess,
+			// 		`❌ Invalid mood number.\nCurrent Mood: ${getUserMood(userId)}\nPlease try again.`
+			// 	);
+			// }
+
+			userMoods.set(userId, {
+				mood: moodObj.name,
+				setAt: Date.now()
+			});
+
+			sessions.delete(userId);
+
+			return await reply(
+				mess,
+				`✨ Mood changed to *${moodObj.name}* for the next 24 hours.\n\nYou can always write: \`Mood:clear\` to Set \`Default\` Mood.`
+			);
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		if (session?.type === "Story_Setup") {
 			session.createdAt = Date.now()
 			sessions.set(userId, session);
@@ -57,30 +668,7 @@ const main = async (mess, client = null) => {
 
 			if (session.step === "awaiting_yes_no") {
 				const input = value.split(":")[0];
-				// const detailsPart = value.split(":")[1];
-				// const detailedParam = detailsPart ? filt(detailsPart) : "";
-				// 			const parts = value.toLowerCase().split(":");
-				// 			// const hmm = parseInt(input);
-				// 			const hmm = parseInt(parts[0].trim());
-				// 			const detailedParam = parts[1]?.trim();
-				// 			const input = parts[0].trim();
-				// 			console.log("DETAIL CHECK:", {
-				// 				value,
-				// 				input,
-				// 				hmm,
-				// 				detailedParam
-				// 			});
 
-				// 			if ((detailedParam === "detail" || detailedParam === "details") && (!isNaN(hmm) && hmm >= 1 && hmm <= Object.keys(store).length)) {
-				// 				var hehe = store[hmm][0];
-				// 				await indi_reply(mess, `Story:
-				// ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${hehe[0][5]}\n
-				// Maximum Time Duration: ${15 / 1000}s OR ${((15 / 1000) / 60)}mins
-				// Minimum Time Duration: ${60 / 1000}s OR ${((60 / 1000) / 60)}mins
-
-				// Note: The Genre is : ${(hehe[0][2]).split(":")[1]}`)
-				// 				return;
-				// 			}
 
 				if (input === "no" || input === "exit") {
 					await reply(mess, `Ok, Reverting Back...!`);
@@ -104,7 +692,7 @@ const main = async (mess, client = null) => {
 					const checkSession = sessions.get(userId);
 					if (checkSession && checkSession.type === "Story_Setup" && (Date.now() - checkSession.createdAt >= (TimeOut - 1000))) {
 						sessions.delete(userId);
-						await reply(mess, "⏰ Request timed out due to inactivity. Reverting back Darling...😭🤌🏻");
+						await reply(mess, "⏰ Request timed out due to inactivity. Reverting back...😭🤌🏻");
 					}
 				}, TimeOut);
 
@@ -132,12 +720,14 @@ const main = async (mess, client = null) => {
 					await reply(mess, `Story:
 ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${hehe[0][5]}\n${hehe[0][6]}\nMaximum Time Duration: ${15 / 1000}s OR ${((15 / 1000) / 60)}mins\nMinimum Time Duration: ${60 / 1000}s OR ${((60 / 1000) / 60)}mins\n\nNote: The Genre is : ${(hehe[0][2]).split(":")[1]}`)
 
-					await indi_reply(mess, "Type the Story Number again to start it.");
-					return;
+					return await indi_reply(mess, "Type the Story Number again to start it.");
 				}
 
 
-				if (isNaN(storyIndex)) {
+				if (
+					isNaN(storyIndex) ||
+					!store[storyIndex]
+				) {
 					sessions.delete(userId);
 					return await reply(mess, "❌ Invalid Story Number. I am Cancelling this Session Darling...😭🤌🏻");
 				}
@@ -155,15 +745,16 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				let timing = parseInt(value);
 
 				if (isNaN(timing) || timing < 15 || timing > 60) {
+					sessions.delete(userId);
 					await indi_reply(mess, "Error Playing the Story Cause the Time Set is Less than 15 seconds or More than 60 seconds.");
 					await indi_reply(mess, `Reverting Back...!`);
-					sessions.delete(userId);
 					return;
+
 				}
 
 				if (store[session.storyIndex] === undefined) {
-					return await reply(mess, `Sorry can't Process this Request now...💔`);
 					sessions.delete(userId);
+					return await reply(mess, `Sorry can't Process this Request now...💔`);
 				}
 
 				sessions.set(userId, {
@@ -219,15 +810,17 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				});
 
 
-				setTimeout(async () => {
-					sessions.set(userId, {
-						type: "Playing_Story",
-						createdAt: Date.now(),
-						storyIndex: savedIndex,
-						timing: savedTiming
-					});
-					return await storyplay(mess, store[savedIndex], savedTiming, sessions);
-				}, 1000);
+				// setTimeout(async () => {
+				// 	sessions.set(userId, {
+				// 		type: "Playing_Story",
+				// 		createdAt: Date.now(),
+				// 		storyIndex: savedIndex,
+				// 		timing: savedTiming
+				// 	});
+				// 	return await storyplay(mess, store[savedIndex], savedTiming, sessions);
+				// }, 1000);
+
+				return startSessionTimeout(userId, "Playing_Story", mess)
 			}
 
 
@@ -262,13 +855,9 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 		if (session?.type === "clear" || session?.type === "cls") {
 			return await clear(mess, session, sessions);
 		}
-		// if (session?.type === "story" || session?.type === "stories") {
-		// 	await Story_Output(mess);
-		// 	return;
-		// }
 
 
-		const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName
+
 		console.log("Message by:", name)
 		console.log("Message =", value)
 
@@ -278,25 +867,92 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 
 
 
-		if (typeof command[value] === "function" || commands_arr.includes(value) || Object.keys(store).includes(value)) {
-			if (value == "hello" || value == "Hi") {
 
-				return reply(mess, hello(mess, (name), (mess.author?.username || name)) + end())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		if (typeof command[value] === "function" || commands_arr.includes(value) || Object.keys(store).includes(value)) {
+			if (value == "hello" || value == "hi") {
+				// WhatsAppHelloCard, GoogleChatHelloCard
+				// 				logToFullHistory(userId, chatId, value, hello(mess, (name), (mess.author?.username || name)))
+				// 				return reply(mess, hello(mess, (name), (mess.author?.username || name)) + end())
+
+				if (platform === "whatsapp" || platform === "whatsapp_group") {
+
+					return await WhatsAppHelloCard(mess);
+				}
+
+				if (platform === "chat") {
+					return await GoogleChatHelloCard(mess);
+				}
+
+				logToFullHistory(
+					userId,
+					chatId,
+					value,
+					hello(mess, name, mess.author?.username || name)
+				);
+
+				return reply(
+					mess,
+					hello(mess, name, mess.author?.username || name) + end()
+				);
 			}
+
 			else if (value == "userinfo") {
+				logToFullHistory(userId, chatId, value, mess, userInfo(mess))
 				return await reply(mess, userInfo(mess) + end())
 			}
 			else if (value == "serverstatus" || value == "server status" || value == "serverinfo") {
+				logToFullHistory(userId, chatId, value, serverInfo())
 				return await reply(mess, serverInfo() + end())
 			}
 			else if (value == "botstatus" || value == "bot status" || value == "botinfo") {
+				logToFullHistory(userId, chatId, value, botInfo())
 				return await reply(mess, botInfo() + end())
 			}
 			else if (value == "delete" || value == "delete this") {
-				del(mess)
+				if (platform == "discord") {
+					logToFullHistory(userId, chatId, value, "Deleted the Value")
+					return del(mess);
+				}
+				else {
+					logToFullHistory(userId, chatId, value, "Deletion in Queue! Error...")
+					return await reply(mess, "This Function is ONLY Avaliable for Discord. Please write: `Discord` for get it's link.")
+				}
 			}
 			else if (value === "server:shutdown" && userId === process.env.admin_id) {
-				return await reply(mess, "Shutting down...");
+				await reply(mess, "Shutting down...");
 				client.destroy();
 				process.exit(0);
 			}
@@ -306,8 +962,9 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 
 
 
-				if (mess.body?.commonEventObject?.hostApp === "CHAT") {
-					return await reply("Sorry this Section is Limited to Only & Available for only WhatsApp and Discord User!\nKeep in Mind that we are Working on the Story Section of Google Chats and will release in Upcoming Version Updates.\nExpected before BiVi_v2.5.0_Stable - v[AIO] Edition\n\nThanks for you Co-operation!")
+				if (platform === "chat") {
+					logToFullHistory(userId, chatId, value, "Sorry this Section is Limited to Only & Available for only WhatsApp and Discord User!\nKeep in Mind that we are Working on the Story Section of Google Chats and will release in Upcoming Version Updates.\nExpected before BiVi_v2.5.0_Stable - v[AIO] Edition\n\nThanks for you Co-operation!")
+					return await reply(mess, "Sorry this Section is Limited to Only & Available for only WhatsApp and Discord User!\nKeep in Mind that we are Working on the Story Section of Google Chats and will release in Upcoming Version Updates.\nExpected before BiVi_v2.5.0_Stable - v[AIO] Edition\n\nThanks for you Co-operation!")
 				}
 
 
@@ -318,19 +975,19 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				let j = storyKeys
 					.map(key => key.replace(/^\[\d+\]\s*/, ""))
 					.join('\n');
-					await reply(mess, `Currently these Stories are Available:
+				await reply(mess, `Currently these Stories are Available:
 						
 						*${j}*
 						
 						Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v1.0.5\n\nDo You Want to Listen to any Story in the given List of Stories?\nExpected Input [Yes/No/Exit]`)
-						
-						
-						
-						sessions.set(userId, {
-							type: "Story_Setup",
-							step: "awaiting_yes_no",
-							createdAt: Date.now()
-						});
+
+
+
+				sessions.set(userId, {
+					type: "Story_Setup",
+					step: "awaiting_yes_no",
+					createdAt: Date.now()
+				});
 
 
 				setTimeout(async () => {
@@ -346,22 +1003,23 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 
 			else if (value == 'exit') {
 				sessions.delete(userId);
-				return;
+				return await reply(mess, "Exiting in:" + end());
 			}
 			else if ((filt(value).startsWith('force:')) && value.includes(" ")) {
 				return await reply(mess, checker(mess))
 			}
 			else if (value == 'clear' || value == 'cls' || value == "clear:memory") {
-				const isWhatsApp =
-					mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp";
+				// const isWhatsApp =
+				// 	mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp";
 
-				const isGoogleChat =
-					mess.body?.chat?.messagePayload?.message;
+				// const isGoogleChat =
+				// 	mess.body?.chat?.messagePayload?.message;
 
-				if (isWhatsApp || isGoogleChat || value === "clear:memory") {
+				if (platform === "whatsapp" || platform === "chat" || value === "clear:memory") {
 					chatHistories.delete(userId);
 					sessions.delete(userId);
-					return await reply(mess, "We cleared your Session's Memory and Session Data!");
+					fullHistories.delete(userId)
+					return await reply(mess, "We cleared your Session's Memory and Session Data!\n However Mood is Preserved, For clearing Mood, Please write: `Mood:clear`");
 				}
 				sessions.set(userId, {
 					type: "clear",
@@ -391,6 +1049,7 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 					if (typeof command[value] === "function") {
 						result = await command[value](mess);
 						if (result?.trim()) {
+							logToFullHistory(userId, chatId, value, result)
 							return await reply(mess, result + end());
 						}
 					}

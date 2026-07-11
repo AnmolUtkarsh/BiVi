@@ -2,12 +2,147 @@ const { getEncoding } = require('js-tiktoken');
 const Groq = require('groq-sdk');
 const { BiVi, BiVi_Force_Reply } = require('./api');
 require('dotenv').config()
-
+const { bivi_image } = require('./api.js');
+const { WhatsAppmenu, googleChatMenu } = require('./menu.js');
 
 
 function filt(value) {
     return (value.toString()).toLowerCase().trim();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function indi_image_send(mess) {
+
+    let imageUrl;
+
+    try {
+        imageUrl = await bivi_image(mess);
+    }
+    catch (error) {
+        return await reply(mess, "Error in Processing the Image due to Temporary Heavy Loads for Now.\nIf this Happens Frequently, report to report@bivi.online or simply write: `Report:` _<issues>_\nPlease Try Again Later :(")
+    }
+
+    if (!imageUrl) return;
+    const isGoogleChat =
+        !!mess.body?.chat ||
+        !!mess.body?.space ||
+        !!mess.body?.commonEventObject;
+
+    if (isGoogleChat) {
+        // Later you can replace this with cards/widgets
+        return {
+            hostAppDataAction: {
+                chatDataAction: {
+                    createMessageAction: {
+                        message: {
+                            text: imageUrl
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+
+
+
+
+    if (mess.channel?.send) {
+        try {
+            return await mess.channel.send({
+                files: [imageUrl]
+            });
+        } catch (error) {
+            console.log("Error in Sending Discord Image!");
+        }
+    }
+
+
+
+
+
+    if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
+        const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+        const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
+
+        if (!recipientId) {
+            console.log("Webhook received, but it's a status update (delivered/read), not an incoming message.");
+            return;
+        }
+        try {
+            const response = await fetch(
+                `https://graph.facebook.com/v25.0/${process.env.phone_number_id}/messages`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${process.env.whatsapp_api_test}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        messaging_product: "whatsapp",
+                        to: recipientId,
+                        type: "image",
+                        image: {
+                            link: imageUrl
+                        }
+                    })
+                }
+            );
+
+            const data = await response.json();
+            if (!response.ok) {
+                console.log("WhatsApp API Error Response:", data);
+            } else {
+                console.log("Message sent successfully:", data.messages?.[0]?.id);
+            }
+        } catch (err) {
+            console.log("Failed to execute fetch to Meta API:", err);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function indi_reply(mess, value) {
     // const valueObj = mess.body?.entry?.[0]?.changes?.[0]?.value || mess.body?.commonEventObject?.hostApp;
@@ -113,12 +248,12 @@ async function indi_reply(mess, value) {
         }
     }
     else if (mess.channel?.send) {
-    try {
-        return await mess.channel.send(value);
-    } catch (error) {
-        console.log("Error in Sending Discord Message!")
+        try {
+            return await mess.channel.send(value);
+        } catch (error) {
+            console.log("Error in Sending Discord Message!")
+        }
     }
-}
 }
 
 async function reply(mess, value) {
@@ -226,10 +361,298 @@ async function reply(mess, value) {
 //     const filter = m => m.author.id === mess.author.id;
 //     const timeCollected = await mess.channel.awaitMessages({ filter, max: 1, time: inter, errors: ['time'] });
 // }
+async function WhatsAppHelloCard(mess) {
+
+    const recipientId =
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+
+    if (!recipientId) return;
+const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
+      ? `🙂‍↔️ Hi there ${name}`
+      : `🙂‍↔️ Hi there ${name} aka ${name1}`;
+    const payload = {
+
+        messaging_product: "whatsapp",
+
+        recipient_type: "individual",
+
+        to: recipientId,
+
+        type: "interactive",
+
+        interactive: {
+
+            type: "list",
+
+            header: {
+                type: "text",
+                text: WhatsAppmenu.title + "\n\n"+ intro + "\n👋 Welcome to BiVi 2.0 LTS"
+            },
+
+            body: {
+                text: WhatsAppmenu.body
+            },
+
+            footer: {
+                text: WhatsAppmenu.footer
+            },
+
+            action: {
+                button: WhatsAppmenu.button,
+                sections: WhatsAppmenu.sections
+            }
+        }
+    };
+
+    try {
+
+        const response = await fetch(
+            `https://graph.facebook.com/v25.0/${process.env.phone_number_id}/messages`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${process.env.whatsapp_api_test}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok)
+            console.log("WhatsApp Error:", data);
+        else
+            console.log("Interactive menu sent.");
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+
+async function GoogleChatHelloCard(mess) {
+const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
+      ? `🙂‍↔️ Hi there ${name}`
+      : `🙂‍↔️ Hi there ${name} aka ${name1}`;
+    return {
+
+        hostAppDataAction: {
+
+            chatDataAction: {
+
+                createMessageAction: {
+
+                    message: {
+
+                        cardsV2: [
+
+                            {
+
+                                cardId: "bivi_menu",
+
+                                card: {
+
+                                    header: {
+
+                                        title: googleChatMenu.title + "\n",
+
+                                        subtitle: intro + "\n" +googleChatMenu.subtitle
+
+                                    },
+
+                                    sections: [
+
+                                        // Body Section
+                                        {
+
+                                            widgets: [
+
+                                                {
+
+                                                    textParagraph: {
+
+                                                        text: googleChatMenu.body
+
+                                                    }
+
+                                                }
+
+                                            ]
+
+                                        },
+
+                                        // Command Sections
+                                        ...googleChatMenu.sections.map(section => ({
+
+                                            header: section.title,
+
+                                            widgets: section.rows.map(row => ({
+
+                                                buttonList: {
+
+                                                    buttons: [
+
+                                                        {
+
+                                                            text: row.title,
+
+                                                            onClick: {
+
+                                                                action: {
+
+                                                                    actionMethodName: row.id,
+
+                                                                    parameters: [
+
+                                                                        {
+
+                                                                            key: "command",
+
+                                                                            value: row.id
+
+                                                                        }
+
+                                                                    ]
+
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                    ]
+
+                                                }
+
+                                            }))
+
+                                        })),
+
+                                        // Footer
+                                        {
+
+                                            widgets: [
+
+                                                {
+
+                                                    textParagraph: {
+
+                                                        text: `<i>${googleChatMenu.footer}</i>`
+
+                                                    }
+
+                                                }
+
+                                            ]
+
+                                        }
+
+                                    ]
+
+                                }
+
+                            }
+
+                        ]
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    };
+
+}
+
+function getPlatform(mess) {
+
+    if (mess.body?.commonEventObject?.hostApp === "CHAT")
+        return "google";
+
+    if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp")
+        return "whatsapp";
+
+    if (mess.author?.id)
+        return "discord";
+
+    return "unknown";
+}
+
+let platform = "";
+
+
+async function buildInteractiveMessage(mess, menu) {
+
+    if (mess.body?.commonEventObject?.hostApp === "CHAT") {
+        platform = 'chat';
+    }
+    else if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.group_id) {
+        platform = 'whatsapp_group';
+    }
+    else if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
+        platform = 'whatsapp';
+    }
+    else if (mess.author?.id) {
+        platform = 'discord';
+    }
+
+
+    const isWhatsApp =
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp";
+
+    const isGoogle =
+        !!mess.body?.chat ||
+        !!mess.body?.space ||
+        !!mess.body?.commonEventObject;
+
+    if (isWhatsApp) {
+
+        return buildWhatsAppInteractive(menu);
+
+    }
+
+    if (isGoogle) {
+
+        return buildGoogleChatInteractive(menu);
+
+    }
+
+    return discordMenu(menu);
+
+}
 
 
 
-async function del(mess) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     async function del(mess) {
 
         const googleMessage =
@@ -284,14 +707,15 @@ async function del(mess) {
             return await repliedMessage.delete();
         }
     }
-}
+
 const clear = async (mess, session, sessions) => {
+    const userIDID = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.user?.name;
     const input = mess.content.toLowerCase();
     if (session.step !== "awaiting_confirm") return;
 
     if (input === "no") {
         indi_reply(mess, "Cancelled");
-        sessions.delete(mess.author.id);
+        sessions.delete(userIDID);
         return;
     }
     if (input.includes("all") || input == "yes:all") {
@@ -299,15 +723,14 @@ const clear = async (mess, session, sessions) => {
 
         await mess.channel.bulkDelete(messages, true);
 
-        await indi_reply(mess, "Cleared all messages...");
-        sessions.delete(mess.author.id);
-        return;
+        sessions.delete(userIDID);
+        return await indi_reply(mess, "Cleared all messages...");
     }
 
     let num = 10;
     if (input.startsWith("yes")) {
         if (input.includes(":")) {
-            const aw = input.split(":")[1]
+            const raw = input.split(":")[1]
             if (raw !== "all") { }
             num = parseInt(input.split(":")[1]) || 10;
         }
@@ -323,12 +746,11 @@ const clear = async (mess, session, sessions) => {
         for (const msg of botMessages) {
             await msg.delete();
         }
-        indi_reply(mess, `Cleared last ${num} Bot Messages...`);
-        sessions.delete(mess.author.id);
-        return;
+        sessions.delete(userIDID);
+        return indi_reply(mess, `Cleared last ${num} Bot Messages...`);
     }
     indi_reply(mess, "Invalid input, cancelled");
-    sessions.delete(mess.author.id);
+    sessions.delete(userIDID);
 }
 
 
@@ -377,4 +799,4 @@ function fetching() {
     }
 }
 
-module.exports = { indi_reply, filt, reply, del, clear, checker, fetching }
+module.exports = { indi_reply, filt, reply, del, clear, checker, fetching, indi_image_send , WhatsAppHelloCard, GoogleChatHelloCard}

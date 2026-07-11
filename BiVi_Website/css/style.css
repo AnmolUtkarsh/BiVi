@@ -1,0 +1,323 @@
+@import url(../css/theme.css);
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--pink);
+    /* background: radial-gradient(circle at 50% 15%, rgba(237, 185, 208, 1) 0%, rgba(148, 187, 233, 1) 30%, rgba(237, 185, 208, 1) 65%, rgba(148, 187, 233, 1) 100%); */
+
+    background: var(--body-bg)
+
+    /* background-repeat: no-repeat; */
+    /* background-size: cover; */
+}
+
+
+/* position: relative; */
+/* background: linear-gradient(
+        180deg,
+        rgba(91,110,225,0) 0%,
+        #5b6ee1 100%,
+        /* #000000 100% */
+
+html {
+    scroll-behavior: smooth;
+}
+
+header {
+    width: 100vw;
+    height: 70px;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: fixed;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.text-logo a {
+    font-family: 'Courier ', Courier, monospace;
+    color: white;
+    text-decoration: none;
+    font-size: 45px;
+}
+
+.Logo_BiVi {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.navbar {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+nav ul li , nav ul li a{
+    display: inline-block;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    text-decoration: none;
+    /* font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; */
+}
+
+.s1 {
+    min-height: calc(100vh);
+    position: relative;
+}
+
+.intro {
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    white-space: nowrap;
+}
+
+.intro>span , #update h2 span{
+    font-family: 'Courier ', Courier, monospace;
+    letter-spacing: -3px;
+    color: #ff000d;
+    /* background-image: linear-gradient( #ff000d); */
+    /* background-clip: text; */
+    /* -webkit-background-clip: text; */
+    /* color: transparent; */
+}
+#update h2{
+    text-align: center;
+}
+#scroll {
+    width: 60px;
+}
+
+.scroll,
+.scroll1,
+.scroll2 {
+    /* color: #ffffff; */
+    font-size: 60px;
+    text-decoration: none;
+    mix-blend-mode: multiply;
+    /* filter: hue-rotate(20deg); */
+}
+
+.s1 {
+    /* background: radial-gradient(circle at 50% 0%, rgba(237, 185, 208, 1) 0%, rgba(148, 187, 233, 1) 100%); */
+}
+
+#features {
+    /* background: radial-gradient(circle at 50% -260%, rgba(237, 185, 208, 1) 0%, rgba(148, 187, 233, 1) 50%, rgba(237, 185, 208, 1) 100%); */
+}
+
+#features,
+#platform {
+    /* background: linear-gradient(to bottom, rgba(148, 187, 233, 1) 0%, rgba(237, 185, 208, 1) 50%, rgba(148, 187, 233, 1) 100%); */
+
+}
+
+#features,
+#platform, #update {
+    position: relative;
+    min-height: 100vh;
+}
+
+.scroll {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.scroll1 {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.scroll2 {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+
+.Features,
+.Platform, .Update {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    min-height: 100vh;
+}
+
+.imp_text {
+    color: white;
+    font-size: 60px;
+    white-space: nowrap;
+}
+
+.container {
+    width: 55vw;
+    height: 450px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(100px);
+    border-radius: 50px;
+    place-self: center;
+    position: relative;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.Features .container:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+#platform .Platform .container .discord:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 55px rgba(88, 101, 242, 0.6);
+}
+
+#platform .Platform .container .discord img {
+    filter: brightness(0) invert(1);
+    /* background-color: #5865F2; */
+}
+
+#platform .Platform .container .discord {
+    /* filter: brightness(0) invert(1); */
+    background-color: var(--discord);
+}
+
+#platform .Platform .container .whats {
+    background: var(--whatsapp)
+}
+
+#platform .Platform .container .whats:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 55px rgba(37, 211, 102, 0.6);
+}
+
+#platform .Platform .container .gchat:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 55px rgba(0, 172, 71, 0.6);
+}
+
+#platform .Platform .container .gchat {
+    background: var(--gchat)
+}
+#platform .Platform .container .insta:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-instagram)
+}
+
+#platform .Platform .container .insta {
+    background: var(--insta)
+}
+#platform .Platform .container img {
+    /* width: 100px; */
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+#platform .Platform .container a:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+
+.container p {
+    position: relative;
+    margin-top: 40px;
+    color: #421a2f;
+    font-size: 33px;
+    white-space: nowrap;
+    justify-self: center;
+    font-weight: bold;
+
+}
+
+.container p>span {
+    color: #006d63;
+}
+
+.container ul li img {
+
+    width: 60px;
+    top: 20px;
+    position: relative;
+    margin-right: 20px;
+
+}
+
+.gif {
+    mix-blend-mode: difference;
+    border-radius: 10px;
+}
+
+.container ul li {
+    font-size: 30px;
+    white-space: nowrap;
+    color: #421a2f;
+}
+
+.container ul {
+    text-decoration: none;
+    list-style: none;
+    position: relative;
+    justify-self: center;
+}
+
+#platform .Platform .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+
+}
+
+#platform .Platform .container a {
+    text-decoration: none;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 2rem;
+    transition: 0.3s;
+}
+
+#platform .Platform .text1 {
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: none;
+    position: relative;
+    /* margin-left: 20px; */
+    margin-top: -10px;
+    margin-bottom: -10px;
+    place-self: center;
+}
+
+/* #platform .Platform .container a:hover { */
+/* transform: scale(1.03); */
+/* } */
+
+/* #platform .Platform .container:hover {} */

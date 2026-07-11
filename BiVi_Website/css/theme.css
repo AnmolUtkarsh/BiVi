@@ -1,0 +1,100 @@
+:root {
+    --primary: #6c63ff;
+    --navbar-height: 70px;
+    --border-radius: 12px;
+
+    --pink: #edb9d0;
+    --blue: #94bbe9;
+    --imp-text: #ff000d;
+
+
+
+
+
+
+
+
+    /* dark-colors: */
+
+
+    --primary: #6c63ff;
+    --navbar-height: 70px;
+    --border-radius: 12px;
+    --purple: #3b1515;
+    --black: #0d0808;
+    --imp-text-dark:#eb246d;
+
+
+
+
+
+
+
+
+
+
+
+    /* Platform cards */
+    --discord: #5865F2;
+    --whatsapp: linear-gradient(to bottom, #25D366, #1b9e4b);
+    --gchat: linear-gradient(to bottom, #77caf7  5%, #0d9e53 50%);
+--insta: radial-gradient(
+  circle at 30% 107%,
+  #feda75 0%,
+  #fa7e1e 30%,
+  #b92165 55%,
+  #962fbf 75%,
+  #4f5bd5 100%
+);
+
+
+    /* platform shadows */
+    --shadow-light: 0px 4px 15px rgba(255, 255, 255, .2);
+    --shadow-discord: 0px 10px 55px rgba(88, 101, 242, .6);
+    --shadow-whatsapp: 0px 10px 55px rgba(37, 211, 102, .6);
+    --shadow-gchat: 0px 10px 55px rgba(0, 172, 71, .6);
+    --shadow-instagram: 0px 10px 55px rgba(195, 92, 126, .6);
+
+
+
+
+    /* Sizes */
+    --header-height: 70px;
+    --container-radius: 50px;
+    --card-height: 450px;
+
+
+
+    /* Blur */
+    --header-blur: 10px;
+    --card-blur: 100px;
+
+
+    /* Main themes: */
+    --body-bg:
+        linear-gradient(to bottom right,
+            transparent 50%,
+            var(--blue) 60%,
+            var(--pink) 100%),
+        radial-gradient(circle at 50% 14%,
+            var(--pink) 0%,
+            var(--blue) 30%,
+            var(--pink) 65%,
+            var(--blue) 100%);
+
+
+
+
+
+    --body-bg-dark:
+        linear-gradient(to bottom right,
+            transparent 50%,
+            var(--black) 60%,
+            var(--purple) 100%),
+        radial-gradient(circle at 50% 14%,
+            var(--purple) 0%,
+            var(--black) 30%,
+            var(--purple) 65%,
+            var(--black) 100%);
+
+}

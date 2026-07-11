@@ -1,11 +1,16 @@
-const { Client, Events, GatewayIntentBits } = require('discord.js')
+const {
+  Client,
+  Events,
+  GatewayIntentBits,
+  Partials
+} = require("discord.js");
 require("dotenv").config()
 const { incom_mess } = require('./cont.js')
 
 const port = process.env.PORT || 3000;
 const verifyToken = process.env.verify_token;
-const {
-  fetching } = require('./controller.js')
+// const {
+  // fetching } = require('./controller.js')
 const { main } = require('./main.js')
 const express = require('express');
 const { errmsg } = require('./messages');
@@ -13,22 +18,27 @@ const { errmsg } = require('./messages');
 
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds,
-  GatewayIntentBits.GuildMessages,
-  GatewayIntentBits.MessageContent,
-  ]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ],
+  partials: [Partials.Channel]
 });
-try {
-  client.once(Events.ClientReady, async (readyClient) => {
+
+client.once(Events.ClientReady, async (readyClient) => {
+    try {
     console.log("Turning ON Server and Turning on BiVi Listener!")
-    await console.log(`Server and Listener is Ready! 
+    console.log(`Server and Listener is Ready! 
 			Logining in as ${readyClient.user.tag}`);
     console.log(`Successfully Logged in as: ${readyClient.user.tag}`)
+  }
+  catch (error) {
+    console.log("Error Starting the Server!");
+    res.sendStatus(200);
+  }
   });
-}
-catch (error) {
-  console.log("Error Starting the Server!")
-}
 
 
 const app = express();
@@ -47,7 +57,6 @@ app.get('/webhook', (mess, res) => {
     res.status(403).end();
   }
 });
-
 
 app.post('/webhook', async (req, res) => {
 
@@ -77,8 +86,8 @@ app.post('/webhook', async (req, res) => {
           return res.status(200).json(response);
         }
       } catch (error) {
-        console.log("Webhook error in Google Chats:", error);
-        res.sendStatus(200);
+        console.error("Webhook error in Google Chats:", error);
+        return res.sendStatus(200);
       }
     }
     // const message = event.chat?.messagePayload?.message;
@@ -91,16 +100,21 @@ app.post('/webhook', async (req, res) => {
       } catch (err) {
         console.error("Webhook Error in WhatsApp:", err);
       }
+      return;
     }
-
+    else if (event?.entry?.[0]?.changes?.[0]?.value?.statuses) {
+      return res.sendStatus(200);
+    }
     else {
       console.log("Unrecognized webhook structure received.");
-      res.status(403).end();
+      return res.sendStatus(200);
     }
 
   } catch (globalErr) {
     console.error("Critical webhook router failure:", globalErr);
-    res.status(403).end();
+    if (!res.headersSent) {
+      res.status(403).end();
+    }
   }
   // if (!req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0] && !req.body?.chat?.messagePayload?.message) {
   //   return;
@@ -108,7 +122,7 @@ app.post('/webhook', async (req, res) => {
 });
 
 
-app.listen(port || 3000, () => {
+app.listen(port, () => {
   console.log(`\nListening on port ${port || 3000}\n`);
 });
 
@@ -122,7 +136,14 @@ client.on(Events.MessageCreate, async (mess) => {
 })
 
 
-client.login(process.env.discord_token).catch(console.log("Error in Logining in Discord!"));
+client.login(process.env.discord_token)
+  .catch(err => console.log("Error logging into Discord:", err));
+
+process.on("SIGTERM", () => {
+    console.log("Received SIGTERM");
+    client.destroy();
+    process.exit(0);
+});
 
 process.on("SIGINT", () => {
   console.log("Closing Server")
@@ -130,3 +151,9 @@ process.on("SIGINT", () => {
   client.destroy()
   process.exit(0);
 })
+process.on("unhandledRejection", (reason) => {
+    console.error(reason);
+});
+process.on("uncaughtException", (err) => {
+    console.error(err);
+});

@@ -1,11 +1,14 @@
 const os = require('os')
-const { version, fix } = require('./config.js')
+const { version, fix, new_info, edition } = require('./config.js')
 function version_info() {
-   return version;
+   return version[(version.length) - 1];
 }
-function fixed() {
-   return fix;
+function last_version_info() {
+   return version[(version.length) - 2]
 }
+// function fixed() {
+//    return fix;
+// }
 function date() {
    const a = new Date().toString();
    return a;
@@ -14,156 +17,322 @@ function unfinished() {
    return "This Section is currently under Construction, We expect to make it before next version releases.\n\n * Version: " + version_info();
 }
 
-function hello(mess, name, name1) {
-   let intro = "";
-   if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
-      intro = "🙂‍↔️ Hi there " + name;
+function verhistory() {
+   let text = "";
+   for (i in version) {
+      text = text + "\n" + i
    }
-   else { intro = "🙂‍↔️ Hi there " + name + " aka " + name1 }
-   return intro + " 🦧,\nI am *BiVi* and I can do things that you might only imagine 🦉🤌🏻.\n\n🫵🏻 - Felt Bored? Chat here for as long as your wish.\n\n> You can write these commands for getting started or can simply write whatever your mind is cooking. ✍🏻🔥\n\n* `Help`\n* `Date`\n* `Details`\n* `UserInfo`\n* `OwnerInfo`\n* `DevInfo`\n* `ServerStatus`\n* `Delete` // Use with Referenced Messages\n* `Clear`\n* `Story`\n* `Report` // For Feedbacks and Suggestions also!\n\nThere's Many More! Just Type `Commands` to get all Commands List!\n\nSpecial Commands: `Force:`, `Image:` // Works on Prompt...\nJust Type `SpecialCommands` to get Special *Commands Usage Help*!\n\nApart from these, Please Type *Help* if wanna get some basic knowledge of BiVi's capabilities!\n\nNOTE: If you Find any BUG 🐞 Please 🙏 REPORT it to us at report@bivi.online\nAll the Server Status are captured using another Servers.\n\nVersion: " + version_info();
+   return text + "Write `verfix` to see the Version Fixes!";
 }
+
+function verfix() {
+   text = ""
+   for (let i in fix) {
+      text = text + i + "\n" + "Fix: \n" + fix[i] + "\n\n"
+
+   }
+   return text;
+}
+// let showReleaseIntro = true;
+
+// After 5.5 hours, switch back automatically
+// setTimeout(() => {
+//    showReleaseIntro = false;
+// }, 20000000); // 5h 33m 20s
+
+// const RELEASE_TIME = new Date("2026-07-03T16:00:00+05:30").getTime();
+// const RELEASE_WINDOW = 20000000; // 5h 33m 20s
+
+// function showReleaseIntro() {
+//    return Date.now() - RELEASE_TIME < RELEASE_WINDOW;
+// }
+
+
+function hello(mess, name, name1) {
+   const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
+      ? `🙂‍↔️ Hi there ${name}`
+      : `🙂‍↔️ Hi there ${name} aka ${name1}`;
+
+
+
+   // if (showReleaseIntro) {
+
+
+     
+
+   //    // return a;
+   // }
+   // if (!showReleaseIntro) {
+      return intro + " 🦧,\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n🫵🏻 - Felt Bored? Chat here for as long as your wish or Create Images!\n> You can write these commands for getting started or can simply write whatever your mind is cooking. ✍🏻🔥\n* ❓ `Help`, `Commands`, `SpecialCommands`\n* 👤 `UserInfo`, `OwnerInfo`, `BotInfo`, `DevInfo`, `Details`\n* 📦 `VerInfo`, `VerFix`, `VerHistory`\n* 🖥️ `ServerInfo`, `ServerStatus`\n* 🗑️ `Clear`, `Delete` (Use `Delete` by replying to a message)\n* 🌐 `Discord`, `Chats`, `Insta`, `WhatsApp`, `Messenger`\n* 📖 `Story`, `Stories`\n* 📝 `Report`\nThere's many more! Just type `Commands` to get the full commands list!\n\nSpecial Commands: `Image: <prompt>`, `Force: <prompt>`, `Search: <prompt>`\nJust type `SpecialCommands` to get Special *Commands Usage Help*!\n\n🌐 *Website's Servers are Online!*\nVisit Now: *BiVi.Online*\n\n🐞 Report Bugs to us at [report@bivi.online] or simply type `Report`.\n*Please Note: BiVi 2.0.0 Uses '.' Prefixes in WhatsApp(Groups), Discord(Servers), G-Chats(Groups) but is Optional in Normal DMs. Hence, Please write: ' `.Hello` '*.\n\nVersion: " + "`" + version_info() + "`";
+   }
+
+
+// }
+
+
+
+// function userInfo(message) {
+//    const raw = message.body?.entry?.[0]?.changes?.[0]?.value;
+
+//    const user =
+//       raw ||
+//       message?.author ||
+//       message.body?.chat?.user ||
+//       {};
+
+//    const member = raw || message?.member;
+//    const guild = raw || message?.guild;
+
+//    const roles = (member?.roles?.cache?.map(role => role.name).join(", ") || "None");
+
+//    const permissions = (member?.permissions?.toArray?.().join(",") || "None");
+
+//    let temp = "";
+//    if (raw?.messaging_product === "whatsapp" || message?.commonEventObject?.hostApp === "CHAT") {
+//       temp = "\n";
+//    } else {
+//       temp = "\n\n";
+//    }
+
+//    const phoneNumber =
+//       raw?.messages?.[0]?.from || "Private";
+
+//    const phoneId =
+//       user?.metadata?.phone_number_id || "Private";
+
+//    const space =
+//       message.body?.chat?.messagePayload?.message?.space || {};
+
+//    const sender =
+//       message.body?.chat?.messagePayload?.message?.sender || {};
+
+//    const contacts = raw?.contacts?.[0] || {};
+
+//    const googleMsg =
+//       message.body?.chat?.messagePayload?.message || {};
+
+//    const isDiscord = !!message?.author;
+//    const isWhatsApp = raw?.messaging_product === "whatsapp";
+//    const isGoogleChat = !!message.body?.chat;
+
+//    return "*=== USER INFO ===*\n\n" +
+//       "* *User ID*: `" + (
+//          user?.id ||
+//          contacts?.user_id?.toString?.() ||
+//          user?.name ||
+//          "None"
+//       ) + "`\n" +
+//       "* *Username*: `" + (
+//          user?.username ||
+//          contacts?.profile?.name ||
+//          message.body?.chat?.user?.displayName ||
+//          "None"
+//       ) + "`\n" +
+//       "* *Global Name*: `" + (
+//          user?.globalName ||
+//          contacts?.profile?.name ||
+//          sender?.displayName ||
+//          "None"
+//       ) + "`\n" +
+//       "* *Tag*: `" + (
+//          user?.tag ||
+//          message.body?.chat?.user?.name ||
+//          "None"
+//       ) + "`\n" +
+//       "* *Bot?*: `" + (
+//          user?.bot ?? false
+//       ) + "`\n" +
+//       "* *Account Created*: `" + (
+//          user?.createdAt?.toString?.() ||
+//          "N.A"
+//       ) + "`" + temp +
+//       "* *Phone No.*: `" + phoneNumber + "`" + temp +
+
+//       "* *Phone No. ID*: `" + phoneId + "`" + temp +
+
+//       "* *Email*: `" + (
+//          message.body?.chat?.user?.email || "Private"
+//       ) + "`" + temp +
+
+//       "* *Nickname*: `" + (
+//          member?.nickname || "None"
+//       ) + "`\n" +
+
+//       "* *Joined Server/Space*: `" + (
+//          googleMsg?.createTime ||
+//          member?.joinedAt ||
+//          "N.A"
+//       ) + "`" + temp +
+
+//       "* *Chat History*: `" + (
+//          space?.spaceHistoryState || "History_On"
+//       ) + "`" + temp +
+
+//       "* *Space Name*: `" + (
+//          guild?.name ||
+//          raw?.messages?.[0]?.context?.group_detail?.subject ||
+//          message.body?.chat?.messagePayload?.message?.space?.displayName ||
+//          message.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.group_id || "None"
+//       ) + "`" + temp +
+
+//       "* *Space Type*: `" + (
+//          space?.spaceType ||
+//          space?.type ||
+//          (isWhatsApp ? "GROUP/DM (WhatsApp)" : "UNKNOWN")
+//       ) + "`" + temp +
+
+//       "* *Last Online At*: `" + (
+//          space?.lastActiveTime || "N.A"
+//       ) + "`" + temp +
+
+//       "* *Roles*: `" + roles + "`" + temp +
+
+//       "* *Permissions*:\n`" + permissions + "`" + temp +
+
+//       "* *Guild Name*: `" + (
+//          guild?.name ||
+//          raw?.messages?.[0]?.context?.group_detail?.subject ||
+//          "None"
+//       ) + "`\n" +
+
+//       "* *Guild ID*: `" + (
+//          guild?.id ||
+//          raw?.messages?.[0]?.context?.group_detail?.id ||
+//          "None"
+//       ) + "`" + temp +
+
+//       "* *Avatar*:\n" +
+//       (
+//          typeof message?.author?.displayAvatarURL === "function"
+//             ? message.author.displayAvatarURL({ extension: "png", size: 1024 })
+//             : contacts?.profile?.avatar_url || sender?.avatarUrl || "`Can't Show`"
+//       );
+// }
 
 
 
 function userInfo(message) {
-   const raw = message.body?.entry?.[0]?.changes?.[0]?.value;
 
-   const user =
-      raw ||
-      message?.author ||
-      message.body?.chat?.user ||
-      {};
+   let info = "*=== USER INFO ===*\n\n";
 
-   const member = raw || message?.member;
-   const guild = raw || message?.guild;
 
-   const roles = (member?.roles?.cache?.map(role => role.name).join(", ") || "None");
+   // Discord
 
-   const permissions = (member?.permissions?.toArray?.().join(",") || "None");
+   if (message?.author) {
 
-   let temp = "";
-   if (raw?.messaging_product === "whatsapp" || message?.commonEventObject?.hostApp === "CHAT") {
-      temp = "\n";
-   } else {
-      temp = "\n\n";
+      const user = message.author;
+      const member = message.member;
+      const guild = message.guild;
+
+      info +=
+         `* User ID: \`${user.id}\`
+* Username: \`${user.username}\`
+* Global Name: \`${user.globalName || "None"}\`
+* Tag: \`${user.tag}\`
+* Bot?: \`${user.bot}\`
+* Account Created: \`${user.createdAt}\`
+
+* Nickname: \`${member?.nickname || "None"}\`
+* Joined Server: \`${member?.joinedAt || "N.A"}\`
+
+* Roles:
+\`${member?.roles?.cache.map(r => r.name).join(", ") || "None"}\`
+
+* Permissions:
+\`${member?.permissions?.toArray().join(", ") || "None"}\`
+
+* Guild Name: \`${guild?.name}\`
+* Guild ID: \`${guild?.id}\`
+
+* Avatar:
+${user.displayAvatarURL({ extension: "png", size: 1024 })}`;
+
+      return info;
    }
 
-   const phoneNumber =
-      raw?.messages?.[0]?.from || "Private";
 
-   const phoneId =
-      user?.metadata?.phone_number_id || "Private";
 
-   const space =
-      message.body?.chat?.messagePayload?.message?.space || {};
 
-   const sender =
-      message.body?.chat?.messagePayload?.message?.sender || {};
+   // WhatsApp
 
-   const contacts = raw?.contacts?.[0] || {};
+   const value = message?.body?.entry?.[0]?.changes?.[0]?.value;
 
-   const googleMsg =
-      message.body?.chat?.messagePayload?.message || {};
+   if (value?.messaging_product === "whatsapp") {
 
-   const isDiscord = !!message?.author;
-   const isWhatsApp = raw?.messaging_product === "whatsapp";
-   const isGoogleChat = !!message.body?.chat;
+      const msg = value.messages?.[0] || {};
+      const contact = value.contacts?.[0] || {};
+      const metadata = value.metadata || {};
+      const context = msg.context || {};
+      const conversation = value.statuses?.[0]?.conversation || {};
 
-   return "*=== USER INFO ===*\n\n" +
-      "* *User ID*: `" + (
-         user?.id ||
-         contacts?.user_id?.toString?.() ||
-         user?.name ||
-         "None"
-      ) + "`\n" +
-      "* *Username*: `" + (
-         user?.username ||
-         contacts?.profile?.name ||
-         message.body?.chat?.user?.displayName ||
-         "None"
-      ) + "`\n" +
-      "* *Global Name*: `" + (
-         user?.globalName ||
-         contacts?.profile?.name ||
-         sender?.displayName ||
-         "None"
-      ) + "`\n" +
-      "* *Tag*: `" + (
-         user?.tag ||
-         message.body?.chat?.user?.name ||
-         "None"
-      ) + "`\n" +
-      "* *Bot?*: `" + (
-         user?.bot ?? false
-      ) + "`\n" +
-      "* *Account Created*: `" + (
-         user?.createdAt?.toString?.() ||
-         "N.A"
-      ) + "`" + temp +
-      "* *Phone No.*: `" + phoneNumber + "`" + temp +
+      info +=
+         `* Phone Number: \`${msg.from || "N.A"}\`
+* Wa ID: \`${contact.wa_id || "N.A"}\`
+* Display Name: \`${contact.profile?.name || "N.A"}\`
 
-      "* *Phone No. ID*: `" + phoneId + "`" + temp +
+* Phone Number ID: \`${metadata.phone_number_id || "N.A"}\`
+* Business Number: \`${metadata.display_phone_number || "N.A"}\`
 
-      "* *Email*: `" + (
-         message.body?.chat?.user?.email || "Private"
-      ) + "`" + temp +
+* Message ID: \`${msg.id || "N.A"}\`
+* Message Type: \`${msg.type || "N.A"}\`
+* Timestamp: \`${msg.timestamp || "N.A"}\`
 
-      "* *Nickname*: `" + (
-         member?.nickname || "None"
-      ) + "`\n" +
+* Context Message ID: \`${context.id || "N.A"}\`
+* Forwarded: \`${context.forwarded ?? false}\`
+* Frequently Forwarded: \`${context.frequently_forwarded ?? false}\`
 
-      "* *Joined Server/Space*: `" + (
-         googleMsg?.createTime ||
-         member?.joinedAt ||
-         "N.A"
-      ) + "`" + temp +
+* Group ID: \`${msg.group_id || context.group_id || "N.A"}\`
+* Group Name: \`${context.group_detail?.subject || "N.A"}\`
 
-      "* *Chat History*: `" + (
-         space?.spaceHistoryState || "History_On"
-      ) + "`" + temp +
+* Messaging Product: \`${value.messaging_product}\`
 
-      "* *Space Name*: `" + (
-   guild?.name ||
-   raw?.messages?.[0]?.context?.group_detail?.subject ||
-   message.body?.chat?.messagePayload?.message?.space?.displayName ||
+* Conversation ID: \`${conversation.id || "N.A"}\`
+* Conversation Origin: \`${conversation.origin?.type || "N.A"}\`
+* Expiration: \`${conversation.expiration_timestamp || "N.A"}\``;
 
-   "None"
-) + "`" + temp +
+      return info;
+   }
 
-      "* *Space Type*: `" + (
-         space?.spaceType ||
-         space?.type ||
-         (isWhatsApp ? "GROUP/DM (WhatsApp)" : "UNKNOWN")
-      ) + "`" + temp +
 
-      "* *Last Online At*: `" + (
-         space?.lastActiveTime || "N.A"
-      ) + "`" + temp +
 
-      "* *Roles*: `" + roles + "`" + temp +
 
-      "* *Permissions*:\n`" + permissions + "`" + temp +
+   // Google Chat
 
-      "* *Guild Name*: `" + (
-         guild?.name ||
-         raw?.messages?.[0]?.context?.group_detail?.subject ||
-         "None"
-      ) + "`\n" +
+   if (message?.body?.chat) {
 
-      "* *Guild ID*: `" + (
-         guild?.id ||
-         raw?.messages?.[0]?.context?.group_detail?.id ||
-         "None"
-      ) + "`" + temp +
+      const chat = message.body.chat;
+      const msg = chat.messagePayload.message;
+      const sender = msg.sender;
+      const space = msg.space;
 
-      "* *Avatar*:\n" +
-      (
-         typeof message?.author?.displayAvatarURL === "function"
-            ? message.author.displayAvatarURL({ extension: "png", size: 1024 })
-            : contacts?.profile?.avatar_url || sender?.avatarUrl || "`Can't Show`"
-      );
+      info +=
+         `* User ID: \`${sender.name || "N.A"}\`
+* Display Name: \`${sender.displayName || "N.A"}\`
+* Email: \`${sender.email || "Private"}\`
+* User Type: \`${sender.type || "N.A"}\`
+* Anonymous: \`${sender.isAnonymous ?? false}\`
+
+* Avatar: ${sender.avatarUrl || "N.A"}
+
+* Space Name: \`${space.displayName || "N.A"}\`
+* Space ID: \`${space.name || "N.A"}\`
+* Space Type: \`${space.spaceType || space.type || "N.A"}\`
+* History: \`${space.spaceHistoryState || "Not Shared"}\`
+
+* Thread: \`${msg.thread?.name || "N.A"}\`
+* Message ID: \`${msg.name || "N.A"}\`
+* Created: \`${msg.createTime || "N.A"}\`
+
+* Slash Command: \`${msg.slashCommand?.commandId || "None"}\`
+* Host App: \`${chat.hostApp || "CHAT"}\`
+* Locale: \`${chat.user?.locale || "N.A"}\`
+* Time Zone: \`${chat.user?.timeZone || "N.A"}\``;
+
+      return info;
+   }
+
+   return "Unknown platform.";
 }
-
 
 
 function serverInfo() {
@@ -171,20 +340,21 @@ function serverInfo() {
       "* *Hostname*: `" + os.hostname() + "`\n" +
       "* *OS*: `" + os.type() + "`\n" +
       "* *Platform*: `" + os.platform() + "`\n" +
-      "* *Release*: `" + os.release() + "`\n" +
+      "* *Release*: `" + "6.17.0-1016" + "`\n" +
       "* *Version*: `" + os.version() + "`\n" +
       "* *Architecture*: `" + os.arch() + "`\n" +
       "* *Machine*: `" + os.machine() + "`\n" +
-      "* *CPU Model*: `" + os.cpus()[0].model + "`\n" +
-      "* *CPU Cores*: `" + os.cpus().length + "`\n" +
       "* *Parallelism*: `" + os.availableParallelism() + "`\n" +
-      "* *Total RAM*: `" + (os.totalmem() / 1024 ** 3).toFixed(2) + " GB`\n" +
       "* *Free RAM*: `" + (os.freemem() / 1024 ** 3).toFixed(2) + " GB`\n" +
-      "* *Used RAM*: `" + ((os.totalmem() - os.freemem()) / 1024 ** 3).toFixed(2) + " GB`\n" +
       "* *System Uptime*: `" + (os.uptime() / 3600).toFixed(2) + " Hours`;\n" +
       "* *CDN Server Provider*: `Cloudflare`;\n" +
-      "* *Global Server Provider*: `AWS` and `Render`;\n" +
+      "* *Global Server Provider*: `ORACLE` and `Render`;\n" +
       "* *Global Server Status*: `UnFetched`;\n\n" +
+      "Note: Server status information is collected using external servers.\n\n" +
+      "*=== SERVER LOAD DETAILS ===*\n\n" +
+      "* *1s Capacity*: `" + "10520 Con-Current Users" + "`\n" +
+      "* *Total BandWidth*: `" + "100TB" + "`\n\n" +
+      // "* *Total BandWidth*: `" + "100TB" + "`\n" +
       "Details Fetched in:";
 }
 
@@ -216,8 +386,8 @@ function botInfo() {
    return "=== BOT INFO ===\n\n" +
       "* *Bot Name*: `" + "BiVi" + "`\n" +
       "* *Version*: `" + version_info() + "`\n" +
-      "* *Last Version*: `" + version_info() + "`\n" +
-      "* *Latest Version Fix*: `" + fixed() + "`\n" +
+      "* *Last Version*: `" + last_version_info() + "`\n" +
+      // "* *Latest Version Fix*: `" + fixed() + "`\n" +
       "* *Bot Edition*: `" + "AIO [All In One] Edition" + "`\n" +
       "* *Development Phase*: `" + "20-06-2026 to 10-06-2026" + "`\n" +
       "* *Testing Phase*: `" + "10-06-2026 to Present" + "`\n" +
@@ -229,7 +399,7 @@ function botInfo() {
       "* *Platform*: `" + process.platform + "`\n" +
       "* *Architecture*: `" + process.arch + "`\n" +
       "* *BiVi Bot Uptime*: `" + (process.uptime() / 3600).toFixed(2) + " Hours`\n" +
-      "* *Working Directory*:\n`Hidden`"
+      "* *Working Directory*:\n`Hidden`\n" + "If you want to know about the current version please write `verinfo`\n Or if you want to see the Version History, please write `verhistory`."
 }
 
 function mem() {
@@ -289,29 +459,25 @@ function help(mess) {
    const displayName = mess.author?.globalName || mess.author?.username || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.user?.displayName || mess.body?.chat?.messagePayload?.message?.sender?.displayName || "User";
 
    return "🙂‍↔️ Hi there " + displayName + " 💀✍️🔥,\n" +
-      "Welcome to the HELP Command\n" +
+      "Welcome in HELP Section\n" +
       "- I will Guide you though my every hidden command\n" +
       "- Before we Proceed further, please note that all commands are case-insensitive. Hence, you can write either capital or small no problem, However the commands are presented in the CamelCase so that users can perceive it's meaning easily.\n\n" +
-      "> You can write these commands for chatting or can simply write whatever you wish for.\n\n" +
-      "Let's see some commands and it's USAGE\n\n" +
-      "* `Date`: Returns Current Date.\n" +
-      "* `Mood`: Used in Setting the Default Mood of the ChatBot [Custom]\n" +
+      "> Commands and it's Uses:\n" +
+      "* `Mood`: Set Custom Mood\n" +
       "* `UserInfo`: Returns the UserInfo including Profile Pic.\n" +
+      "* `ownerInfo`: Used to get Server/Space/Group Owner Details.*\n" +
+      "* `devInfo`: Used to get ChatBot[BiVi] Developer Details.*\n" +
       "* `ServerStatus` OR `ServerInfo`: Returns the Live Server Details\n" +
-      "* `Clear` OR `Cls`: It is used to Delete Chats under the Specific Channel. By Default it is set to only BiVi's Messages, however you can use All command for delete whole chats. Write: Clear to get more of it's details.\n" +
+      "* `Clear` OR `Cls`: \nIn Discord, it is used to Delete Chats under the Specific Channel.\nIn WhatsApp, G-Chats and Instagram, this Clears User's Memory. Write: Clear to get more of it's details.\n" +
       "* `Bot` OR `BotInfo`\n" +
-      "* `Report`: Used to Report directly to the Developer [Under-Construction till *BiVi v1.2.1 Stable*]\n" +
+      "* `Report`: Used to Report directly to the Developer\n" +
+      "* `VerInfo` OR `Version`: Used to get the Version Information of the BiVi.\n" +
+      "* `Story`: [Contains Child Commands, So please write: *Story* first]\n" +
       "* `Image`: Used to Create Image. Use Command as: *Image: Prompt_Here*\n" +
-      "* `ownerinfo`: Used to get Server/Space/Group Owner Details.*\n" +
-      "* `devinfo`: Used to get ChatBot[BiVi] Developer Details.*\n" +
-      "* `VerInfo` |OR| `Version`: Used to get the Version Information of the BiVi.\n\n" +
+      "* `Search`: Used to Search Content from Internet. Use Command as: *Search: Prompt_Here*\n" +
+      "* `Force`: Used If you get any error in the Message Generation then write: `Force`: Prompt_here\n" +
       "There's Many More!!! Just Type `Commands` to get all Commands List!\n\n" +
-      "We made the world's first Super Advanced Error Handling System (AEHS) especifically for BiVi Bot released in *BiVi v1.0.7 Stable*\n" +
-      "However, If you get any error in the Message Generation then write:\n\n" +
-      "* `Force`: Prompt_here\n\n" +
-      "Other Crazie Backup Commands:\n" +
-      "* `Image`:\n" +
-      "* `Story`: [Contains Child Commands, So please write: *Story* first]\n\n" +
+      "We made the world's first Super Advanced Error Handling System (AEHS) especifically for BiVi Bot released in *BiVi v1.0.7 Stable*\n\n" +
       "Want to connect to Developer or want to Report or give Feedback? Email us at: support@bivi.online\n" +
       "We would be happy to listen from you!\n\n" +
       "Message Fetched from Server and Sent in:";
@@ -355,13 +521,9 @@ function help(mess) {
 function commands() {
    return "=== COMMANDS LIST ===\n\n" +
       "* `Story`: Featured in Few Versions ONLY [Available]\n" +
-      "* `Help`\n" +
-      "* `Date*\n" +
-      "* `Mood*: _[Under-Construction]_\n" +
+      "* `Help`, `UserInfo`, `OwnerInfo`, `DevInfo`\n" +
+      "* `Mood` |OR| `Moods`\n" +
       "* `Points |OR| Points{UserName}`: _[Under-Construction]_\n" +
-      "* `UserInfo`\n" +
-      "* `OwnerInfo`\n" +
-      "* `DevInfo`\n" +
       "* `ServerStatus |OR| ServerInfo`\n" +
       "*` Clear |OR| Cls`: _[Contains Child Commands, So please write: `Clear` first]_\n" +
       "* `ConnectAcc |OR| LinkAcc`: _[Under-Construction]_\n" +
@@ -370,14 +532,14 @@ function commands() {
       "* `Report`: _[Under-Construction]_\n" +
       "* `Music`: _[Under-Construction]_\n" +
       "* `Code`: _[Under-Construction]_\n" +
-      "* `Image`: _[Under-Construction]_\n" +
+      "* `Image`\n" +
       "* `IMGSol`: _[Under-Construction]_\n" +
       "* `Skill-ShowOff`: _[Under-Construction]_\n" +
       "* `MessMeAt -Dis -Whats -Insta -GooMess`: _[Under-Construction]_\n" +
-      "* `LanguagSet`: _[Under-Construction]_\n\n" +
+      "* `Language` |OR| `Lang`\n\n" +
       "Other Commands:\n" +
       "* *Force:*\n" +
-      "* *Silent:*\n" +
+      "* *Search:*\n" +
       "* *Image:*\n" +
       "* *Story*: `[Contains Child Commands, So please write: *Story* first]`\n\n" +
       "Version: " + version_info() + "\n\n" +
@@ -387,9 +549,9 @@ function commands() {
 
 
 function specialcommands() {
-   return "Welcome to Special Commands Usage Info!\n" +
-      "These commands will help you create more Improved and Detailed Outlinings!\n\n" +
-      "Present Available Special Commands:\n\n" +
+   return "Welcome in Special Commands Section 🫠🚀!\n" +
+      "These commands will help you create more Improved and Detailed Outlinings!\n" +
+      "Present Available Special Commands:\n" +
       "* `Force`: *Prompt...*\n" +
       "This allows you to Force-fully divert your Input to different AI Models. However, you won't be requiring this because BiVi is equipped with world's first Super Advanced Error Handling System (AEHS) in v1.0.7. It automatically transfers your message to different AI Models ensuring smooth and reliable memory and Result.\n\n" +
       "* `Image`: *Prompt...*\n" +
@@ -402,8 +564,8 @@ function specialcommands() {
 
 
 function devinfo() {
-   return "*=== Developer Details ===*\n\n" + 
-   "* *Developer Name*: `Anmol Utkarsh`\n" +
+   return "*=== Developer Details ===*\n\n" +
+      "* *Developer Name*: `Anmol Utkarsh`\n" +
       "* *Developer Role*: `Official Bot Developer` / `Owner`\n" +
       "* *Access Level*: `FULL`\n" +
       "* *Is Bot Owner*: `true`\n\n" +
@@ -496,9 +658,24 @@ function ownerinfo(message) {
 // }
 
 
-const command = { "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'devinfo': devinfo, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands, "specialcommand": specialcommands, "mem": mem, "bivi": botInfo, 'ownerinfo': ownerinfo}
+function discord() {
+   return "Hi there,\nThe Link for BiVi Official Discord ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
+}
+function discord() {
+   return "Hi there,\nThe Link for BiVi Official Discord ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
+}
+function chats() {
+   return "Hi there,\nThe Link for Google Chats BiVi Official ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
 
-const commands_arr = ["delete this", "delete", "serverstatus", "server status", "clear", "yes", "no", "cls", "clear", "story", "stories", "exit", "devinfo"]
+}
+function tac() {
+   return "T and C."
+
+}
+
+const command = { "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'devinfo': devinfo, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verhistory": () => verhistory(), "versionhistory": () => verhistory(), "verhis": () => verhistory(), "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands, "specialcommand": specialcommands, "mem": mem, "bivi": botInfo, 'ownerinfo': ownerinfo, 'verfix': () => verfix(), 'versionfix': () => verfix(), "serverstatus": serverInfo, "chats": chats , "terms & conditions" : tac}
+
+const commands_arr = ["delete this", "delete", "clear", "cls", "clear", "story", "stories", "devinfo"]
 
 
 
