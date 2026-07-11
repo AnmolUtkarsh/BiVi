@@ -274,9 +274,9 @@ const { version_info } = require("./messages");
 
 
 const WhatsAppmenu = {
-    title: "Introducing BiVi 2.0.0 LTS Edition!",
+    title: "Introducing BiVi 2.0 LTS!",
     subtitle: "👋 Welcome to BiVi 2.0.0 LTS",
-    body: " 🦧,\n👋 Welcome to BiVi 2.0.0 LTS\n\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n🫵🏻 - Felt Bored? Chat here for as long as your wish or Create Images!\nChoose an option below to get started. or can simply write whatever your mind is cooking. ✍🏻🔥\n\nATTENTION: From BiVi 2.0.0 LTS, BiVi is only listening to '.' Commands. Example: `.Hello` or `.Image:....`. But you can get into Group Mode to change this. In Servers/Groups, this commands is OPTIONAL!\nType these:\n* 🌐 `Discord`, `Chats`, `Instagram`, `WhatsApp`, `Messenger`\n* BiVi.online servers are Online!, Checkout Terms & Condition here: https://bivi.online/terms-and-conditions.\n\nDue to WhatsApp Template Limit, we are only to show 10 Top Commands in the Button Below. Please write: `.Hello.` to get all the commands!" + version_info(),
+    body: " 🦧,\n👋 Welcome to BiVi 2.0 LTS\n\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n🫵🏻 - Felt Bored? Chat here for as long as your wish or Create Images!\nChoose an option below to get started. or can simply write whatever your mind is cooking. ✍🏻🔥\n\nATTENTION: From BiVi 2.0.0 LTS, BiVi is only listening to '.' Commands. Example: `.Hello` or `.Image:....`. But you can get into Group Mode to change this. In Servers/Groups, this commands is OPTIONAL!\nType these:\n* 🌐 `Discord`, `Chats`, `Instagram`, `WhatsApp`, `Messenger`\n* BiVi.online servers are Online!, Checkout Terms & Condition here: https://bivi.online/terms-and-conditions.\n\nDue to WhatsApp Template Limit, we are only to show 10 Top Commands in the Button Below. Please write: `.Hello.` to get all the commands!" + version_info(),
     footer: "BiVi™ • bivi.online • Listening to '.' Prefixes",
     button: "BiVi Commands",
 
@@ -294,11 +294,11 @@ const WhatsAppmenu = {
                     title: ".Commands",
                     description: "View all available commands."
                 },
-                {
-                    id: ".specialcommands",
-                    title: ".SpecialCommands",
-                    description: "View all Special commands."
-                }
+                // {
+                //     id: ".specialcommands",
+                //     title: ".SpecialCommands",
+                //     description: "View all Special commands."
+                // }
 
             ]
         },
@@ -318,11 +318,11 @@ const WhatsAppmenu = {
                     title: ".BotInfo",
                     description: "About BiVi"
                 },
-                {
-                    id: ".ownerinfo",
-                    title: ".OwnerInfo",
-                    description: "About Server/Space Owner"
-                },
+                // {
+                //     id: ".ownerinfo",
+                //     title: ".OwnerInfo",
+                //     description: "About Server/Space Owner"
+                // },
                 {
                     id: ".devinfo",
                     title: ".DevInfo",
@@ -363,11 +363,11 @@ const WhatsAppmenu = {
                     title: ".Version",
                     description: "Current Version details"
                 },
-                {
-                    id: ".verhis",
-                    title: ".VerHis",
-                    description: "All Versions History"
-                }
+                // {
+                //     id: ".verhis",
+                //     title: ".VerHis",
+                //     description: "All Versions History"
+                // }
             ]
         },
 

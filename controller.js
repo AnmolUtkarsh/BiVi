@@ -387,11 +387,11 @@ const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === 
 
             header: {
                 type: "text",
-                text: WhatsAppmenu.title + "\n\n"+ intro + "\n👋 Welcome to BiVi 2.0 LTS"
+                text: WhatsAppmenu.title + "\n\n"
             },
 
             body: {
-                text: WhatsAppmenu.body
+                text: intro + WhatsAppmenu.body
             },
 
             footer: {
