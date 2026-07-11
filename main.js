@@ -379,7 +379,6 @@ const main = async (mess, client = null) => {
 		if (session?.type === "awaiting_lang_yes_no" && (!(value === "no" || value === "exit" || value === "yes"))) {
 			return await reply(mess, "Invalid Input!");
 		}
-
 		if (session?.type === "awaiting_lang_yes_no" && value === "yes") {
 			const currentLang = getUserLanguage(userId);
 			sessions.set(userId, {
