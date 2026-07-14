@@ -19,10 +19,10 @@ function unfinished() {
 
 function verhistory() {
    let text = "";
-   for (i in version) {
+   for (i of version) {
       text = text + "\n" + i
    }
-   return text + "Write `verfix` to see the Version Fixes!";
+   return text + "\nWrite `verfix` to see the Version Fixes!";
 }
 
 function verfix() {
@@ -661,8 +661,8 @@ function ownerinfo(message) {
 function discord() {
    return "Hi there,\nThe Link for BiVi Official Discord ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
 }
-function discord() {
-   return "Hi there,\nThe Link for BiVi Official Discord ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
+function whatsapp() {
+   return "Hi there,\nThe Link for BiVi Official Discord ChatBot is:\n\n*_https://wa.me/917294132087_*"
 }
 function chats() {
    return "Hi there,\nThe Link for Google Chats BiVi Official ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
@@ -673,7 +673,7 @@ function tac() {
 
 }
 
-const command = { "hi": hello, "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'devinfo': devinfo, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verhistory": () => verhistory(), "versionhistory": () => verhistory(), "verhis": () => verhistory(), "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands, "specialcommand": specialcommands, "mem": mem, "bivi": botInfo, 'ownerinfo': ownerinfo, 'verfix': () => verfix(), 'versionfix': () => verfix(), "serverstatus": serverInfo, "chats": chats , "terms & conditions" : tac}
+const command = { "hi": hello, "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'devinfo': devinfo, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verhistory": () => verhistory(), "versionhistory": () => verhistory(), "verhis": () => verhistory(), "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands, "specialcommand": specialcommands, "mem": mem, "bivi": botInfo, 'ownerinfo': ownerinfo, 'verfix': () => verfix(), 'versionfix': () => verfix(), "serverstatus": serverInfo, "chats": chats , "terms & conditions" : tac, "discord": discord, "whatsapp":whatsapp, "chats":chats, "gchats":chats}
 
 const commands_arr = ["delete this", "delete", "clear", "cls", "clear", "story", "stories", "devinfo"]
 

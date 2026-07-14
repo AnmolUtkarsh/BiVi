@@ -1,0 +1,53 @@
+@import url(/css/theme.css);
+
+*{
+    margin:0;
+    padding:0;
+    font-family: var(--main-font);
+}
+body{
+    background: var(--temp2);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+#main {
+    position: relative;
+    height: 100vh;
+}
+.h{
+    font-size: 70px;
+}
+/* .h, .p{
+    position: relative;
+    height: 100vh;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+} */
+.p {
+    margin-top: 10px;
+    font-size: 40px;
+    font-weight:500;
+}
+.container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: max-content;
+}
+.center {
+    /* position: absolute; */
+    text-align: center;
+    color: white;
+}
+
+/* .main{
+    width:200px;
+    height: 100px;
+    background: white;
+    position: absolute;
+    justify-content: center;
+} */

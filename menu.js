@@ -276,7 +276,7 @@ const { version_info } = require("./messages");
 const WhatsAppmenu = {
     title: "Introducing BiVi 2.0 LTS!",
     subtitle: "👋 Welcome to BiVi 2.0.0 LTS",
-    body: " 🦧,\n👋 Welcome to BiVi 2.0 LTS\n\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n🫵🏻 - Felt Bored? Chat here for as long as your wish or Create Images!\nChoose an option below to get started. or can simply write whatever your mind is cooking. ✍🏻🔥\n\nATTENTION: From BiVi 2.0.0 LTS, BiVi is only listening to '.' Commands. Example: `.Hello` or `.Image:....`. But you can get into Group Mode to change this. In Servers/Groups, this commands is OPTIONAL!\nType these:\n* 🌐 `Discord`, `Chats`, `Instagram`, `WhatsApp`, `Messenger`\n* BiVi.online servers are Online!, Checkout Terms & Condition here: https://bivi.online/terms-and-conditions.\n\nDue to WhatsApp Template Limit, we are only to show 10 Top Commands in the Button Below. Please write: `.Hello.` to get all the commands!" + version_info(),
+    body: " 🦧,\n👋 Welcome to BiVi 2.0 LTS\n\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\nChoose an option below to get started. or can simply write anything. ✍🏻🔥\n\nATTENTION: From BiVi 2.0.0 LTS, BiVi is only listening to '.' Commands. Example: `.Hello` or `.Image:....`. But you can get into Group Mode to change this. In Servers/Groups, this commands is OPTIONAL!\nType these:\n• 🌐 `Discord`, `Chats`, `Instagram`, `WhatsApp`, `Messenger`\n• BiVi.online servers are Online!, Checkout Terms & Condition here: https://bivi.online/terms-and-conditions.\n\nMax only 10 buttons allowed by WhatsApp. Type .Hello. to see all commands!" + version_info(),
     footer: "BiVi™ • bivi.online • Listening to '.' Prefixes",
     button: "BiVi Commands",
 
@@ -306,6 +306,21 @@ const WhatsAppmenu = {
 
 
         {
+            title: "🚀 BiVi 2.0 Features",
+            rows: [
+                {
+                    id: ".modes",
+                    title: ".Modes",
+                    description: "✨ Modes | All Latest Modes"
+                },
+                {
+                    id: ".history",
+                    title: ".History",
+                    description: "⌚ History | Control and see Chats History"
+                },
+            ]
+        },
+        {
             title: "👤 Information",
             rows: [
                 {
@@ -331,26 +346,6 @@ const WhatsAppmenu = {
             ]
         },
         {
-            title: "✨ Modes",
-            rows: [
-                {
-                    id: ".modes",
-                    title: ".Modes",
-                    description: "All Latest Modes"
-                },
-            ]
-        },
-        {
-            title: "⌚ History",
-            rows: [
-                {
-                    id: ".history",
-                    title: ".History",
-                    description: "Control and see Chats History"
-                },
-            ]
-        },
-        {
             title: "🖥️ Server | 📦 Version",
             rows: [
                 {
@@ -361,7 +356,7 @@ const WhatsAppmenu = {
                 {
                     id: ".version",
                     title: ".Version",
-                    description: "Current Version details"
+                    description: "Current Version details, OR Type .verFix | .verFixHis"
                 },
                 // {
                 //     id: ".verhis",
@@ -388,190 +383,271 @@ const WhatsAppmenu = {
 };
 
 
+// const googleChatMenu = {
+//     title: "Introducing BiVi 2.0.0 LTS Edition!",
+//     subtitle: "👋 Welcome to BiVi 2.0.0 LTS",
+//     body: " 🦧,\n👋 Welcome to BiVi 2.0.0 LTS\n\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n🫵🏻 - Felt Bored? Chat here for as long as your wish or Create Images!\nChoose an option below to get started. or can simply write whatever your mind is cooking. ✍🏻🔥\n\nATTENTION: From BiVi 2.0.0 LTS, BiVi is only listening to '.' Commands. Example: `.Hello` or `.Image:....`. But you can get into Group Mode to change this. In Servers/Groups, this command is OPTIONAL!\nType these:\n* 🌐 `Discord`, `Chats`, `Instagram`, `WhatsApp`, `Messenger`\n",
+
+//     footer: "BiVi™ • bivi.online • "+ version_info() + " • Listening to '.' Commands",
+
+//     sections: [
+//         {
+//             title: "🚀 Getting Started",
+//             rows: [
+//                 {
+//                     id: ".help",
+//                     title: ".Help",
+//                     description: "Getting Started Guide"
+//                 },
+//                 {
+//                     id: ".commands",
+//                     title: ".Commands",
+//                     description: "View all available commands."
+//                 },
+//                 {
+//                     id: ".specialcommands",
+//                     title: ".SpecialCommands",
+//                     description: "View all Special commands."
+//                 }
+//             ]
+//         },
+//         {
+//             title: "✨ Special Commands", rows:
+//                 [
+//                     {
+//                         id: ".image: generate image of an elephant",
+//                         title: ".Image:<prompt>",
+//                         description: "Generate AI images from a prompt."
+
+//                     },
+//                     {
+//                         id: ".search: Latest News in India",
+//                         title: ".Search:<prompt>",
+//                         description: "Search the web using AI."
+
+//                     },
+//                     {
+//                         id: ".force: Are you Working?",
+//                         title: ".Force:<prompt>",
+//                         description: "Force an AI response (backup mode)."
+
+//                     },
+//                     {
+//                         id: ".story",
+//                         title: ".Story",
+//                         description: "Listen to Stories."
+
+//                     }
+
+//                 ]
+//         },
+
+//         {
+//             title: "👤 Information",
+//             rows: [
+//                 {
+//                     id: ".userinfo",
+//                     title: ".UserInfo",
+//                     description: "Your profile details"
+//                 },
+//                 {
+//                     id: ".botinfo",
+//                     title: ".BotInfo",
+//                     description: "About BiVi"
+//                 },
+//                 {
+//                     id: ".ownerinfo",
+//                     title: ".OwnerInfo",
+//                     description: "About Server/Space Owner"
+//                 },
+//                 {
+//                     id: ".devinfo",
+//                     title: ".DevInfo",
+//                     description: "About BiVi Developer"
+//                 }
+//             ]
+//         },
+
+//         {
+//             title: "✨ Modes",
+//             rows: [
+//                 {
+//                     id: ".modes",
+//                     title: ".Modes",
+//                     description: "All Latest Modes"
+//                 },
+//                 {
+//                     id: ".groupmode",
+//                     title: ".Mode:Group",
+//                     description: "Enters into Group Mode where '.' Prefix is not compulsory."
+//                 },
+//                 {
+//                     id: ".groupallmode",
+//                     title: ".Mode:GroupAll",
+//                     description: "Only for Groups. Enables Group Mode for everyone."
+//                 }
+//             ]
+//         },
+
+//         {
+//             title: "⌚ History",
+//             rows: [
+//                 {
+//                     id: ".history",
+//                     title: ".History",
+//                     description: "Control and see Chats History"
+//                 },
+//                 {
+//                     id: ".history:on",
+//                     title: ".History:Off",
+//                     description: "Temporarily disable chat history."
+//                 },
+//                 {
+//                     id: ".history:off",
+//                     title: ".History:Off",
+//                     description: "Temporarily disable chat history."
+//                 }
+//             ]
+//         },
+
+//         {
+//             title: "🖥️ Server | 📦 Version",
+//             rows: [
+//                 {
+//                     id: ".serverinfo",
+//                     title: ".ServerInfo",
+//                     description: "VPS Server Instance Info"
+//                 },
+//                 {
+//                     id: ".version",
+//                     title: ".Version",
+//                     description: "Current Version details"
+//                 },
+//                 {
+//                     id: ".verhis",
+//                     title: ".VerHis",
+//                     description: "All Versions History"
+//                 }
+//             ]
+//         },
+
+//         {
+//             title: "🌐 Platforms",
+//             rows: [
+//                 {
+//                     id: ".discord",
+//                     title: ".Discord",
+//                     description: "Discord server link"
+//                 },
+//                 {
+//                     id: ".chats",
+//                     title: ".Google Chats",
+//                     description: "Google Chat link"
+//                 },
+//                 {
+//                     id: ".instagram",
+//                     title: ".Instagram",
+//                     description: "Under testing"
+//                 }
+//             ]
+//         },
+
+//         {
+//             title: "🐞 Support",
+//             rows: [
+//                 {
+//                     id: ".report",
+//                     title: "Report:<prompt>",
+//                     description: "Report an issue"
+//                 },
+//                 {
+//                     id: "terms & conditions",
+//                     title: "Terms & Conditions",
+//                     description: "Or Visit https://bivi.online/terms-and-conditions."
+//                 }
+//             ]
+//         }
+//     ]
+// };
+
+
+
 const googleChatMenu = {
     title: "Introducing BiVi 2.0.0 LTS Edition!",
     subtitle: "👋 Welcome to BiVi 2.0.0 LTS",
-    body: " 🦧,\n👋 Welcome to BiVi 2.0.0 LTS\n\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n🫵🏻 - Felt Bored? Chat here for as long as your wish or Create Images!\nChoose an option below to get started. or can simply write whatever your mind is cooking. ✍🏻🔥\n\nATTENTION: From BiVi 2.0.0 LTS, BiVi is only listening to '.' Commands. Example: `.Hello` or `.Image:....`. But you can get into Group Mode to change this. In Servers/Groups, this command is OPTIONAL!\nType these:\n* 🌐 `Discord`, `Chats`, `Instagram`, `WhatsApp`, `Messenger`\n",
+    body: " 🦧,\n👋 Welcome to BiVi 2.0.0 LTS\n\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\nChoose an option below to get started. or can simply write whatever your mind is cooking. ✍🏻🔥\n\nATTENTION: From BiVi 2.0.0 LTS, BiVi is only listening to '.' Commands. Example: `.Hello` or `.Image:....`. But you can get into Group Mode to change this. In Servers/Groups, this command is OPTIONAL!\nType these:\n* 🌐 `Discord`, `Chats`, `Instagram`, `WhatsApp`, `Messenger`\n",
 
-    footer: "BiVi™ • bivi.online • "+ version_info() + " • Listening to '.' Commands",
+    footer: "BiVi™ • bivi.online • " + version_info() + " • Listening to '.' Commands",
 
     sections: [
         {
             title: "🚀 Getting Started",
             rows: [
-                {
-                    id: ".help",
-                    title: ".Help",
-                    description: "Getting Started Guide"
-                },
-                {
-                    id: ".commands",
-                    title: ".Commands",
-                    description: "View all available commands."
-                },
-                {
-                    id: ".specialcommands",
-                    title: ".SpecialCommands",
-                    description: "View all Special commands."
-                }
+                { id: ".help", title: ".Help", description: "Getting Started Guide" },
+                { id: ".commands", title: ".Commands", description: "View all available commands." },
+                { id: ".specialcommands", title: ".SpecialCommands", description: "View all Special commands." }
             ]
         },
         {
-            title: "✨ Special Commands", rows:
-                [
-                    {
-                        id: ".image: generate image of an elephant",
-                        title: ".Image:<prompt>",
-                        description: "Generate AI images from a prompt."
-
-                    },
-                    {
-                        id: ".search: Latest News in India",
-                        title: ".Search:<prompt>",
-                        description: "Search the web using AI."
-
-                    },
-                    {
-                        id: ".force: Are you Working?",
-                        title: ".Force:<prompt>",
-                        description: "Force an AI response (backup mode)."
-
-                    },
-                    {
-                        id: ".story",
-                        title: ".Story",
-                        description: "Listen to Stories."
-
-                    }
-
-                ]
+            title: "✨ Special Commands", 
+            rows: [
+                { id: ".image: generate image of an elephant", title: ".Image:<prompt>", description: "Generate AI images from a prompt." },
+                { id: ".search: Latest News in India", title: ".Search:<prompt>", description: "Search the web using AI." },
+                { id: ".force: Are you Working?", title: ".Force:<prompt>", description: "Force an AI response (backup mode)." },
+                { id: ".story", title: ".Story", description: "Listen to Stories." }
+            ]
         },
-
         {
             title: "👤 Information",
             rows: [
-                {
-                    id: ".userinfo",
-                    title: ".UserInfo",
-                    description: "Your profile details"
-                },
-                {
-                    id: ".botinfo",
-                    title: ".BotInfo",
-                    description: "About BiVi"
-                },
-                {
-                    id: ".ownerinfo",
-                    title: ".OwnerInfo",
-                    description: "About Server/Space Owner"
-                },
-                {
-                    id: ".devinfo",
-                    title: ".DevInfo",
-                    description: "About BiVi Developer"
-                }
+                { id: ".userinfo", title: ".UserInfo", description: "Your profile details" },
+                { id: ".botinfo", title: ".BotInfo", description: "About BiVi" },
+                { id: ".ownerinfo", title: ".OwnerInfo", description: "About Server/Space Owner" },
+                { id: ".devinfo", title: ".DevInfo", description: "About BiVi Developer" }
             ]
         },
-
         {
             title: "✨ Modes",
             rows: [
-                {
-                    id: ".modes",
-                    title: ".Modes",
-                    description: "All Latest Modes"
-                },
-                {
-                    id: ".groupmode",
-                    title: ".Mode:Group",
-                    description: "Enters into Group Mode where '.' Prefix is not compulsory."
-                },
-                {
-                    id: ".groupallmode",
-                    title: ".Mode:GroupAll",
-                    description: "Only for Groups. Enables Group Mode for everyone."
-                }
+                { id: ".modes", title: ".Modes", description: "All Latest Modes" },
+                { id: ".groupmode", title: ".Mode:Group", description: "Enters into Group Mode where '.' Prefix is not compulsory." },
+                { id: ".groupallmode", title: ".Mode:GroupAll", description: "Only for Groups. Enables Group Mode for everyone." }
             ]
         },
-
         {
             title: "⌚ History",
             rows: [
-                {
-                    id: ".history",
-                    title: ".History",
-                    description: "Control and see Chats History"
-                },
-                {
-                    id: ".history:on",
-                    title: ".History:Off",
-                    description: "Temporarily disable chat history."
-                },
-                {
-                    id: ".history:off",
-                    title: ".History:Off",
-                    description: "Temporarily disable chat history."
-                }
+                { id: ".history", title: ".History", description: "Control and see Chats History" },
+                { id: ".history:on", title: ".History:On", description: "Temporarily enable chat history." }, // Fixed duplicate title mismatch
+                { id: ".history:off", title: ".History:Off", description: "Temporarily disable chat history." }
             ]
         },
-
         {
             title: "🖥️ Server | 📦 Version",
             rows: [
-                {
-                    id: ".serverinfo",
-                    title: ".ServerInfo",
-                    description: "VPS Server Instance Info"
-                },
-                {
-                    id: ".version",
-                    title: ".Version",
-                    description: "Current Version details"
-                },
-                {
-                    id: ".verhis",
-                    title: ".VerHis",
-                    description: "All Versions History"
-                }
+                { id: ".serverinfo", title: ".ServerInfo", description: "VPS Server Instance Info" },
+                { id: ".version", title: ".Version", description: "Current Version details" },
+                { id: ".verhis", title: ".VerHis", description: "All Versions History" }
             ]
         },
-
         {
             title: "🌐 Platforms",
             rows: [
-                {
-                    id: ".discord",
-                    title: ".Discord",
-                    description: "Discord server link"
-                },
-                {
-                    id: ".chats",
-                    title: ".Google Chats",
-                    description: "Google Chat link"
-                },
-                {
-                    id: ".instagram",
-                    title: ".Instagram",
-                    description: "Under testing"
-                }
+                { id: ".discord", title: ".Discord", description: "Discord server link" },
+                { id: ".chats", title: ".Google Chats", description: "Google Chat link" },
+                { id: ".instagram", title: ".Instagram", description: "Under testing" }
             ]
         },
-
         {
             title: "🐞 Support",
             rows: [
-                {
-                    id: ".report",
-                    title: "Report:<prompt>",
-                    description: "Report an issue"
-                },
-                {
-                    id: "terms & conditions",
-                    title: "Terms & Conditions",
-                    description: "Or Visit https://bivi.online/terms-and-conditions."
-                }
+                { id: ".report", title: "Report:<prompt>", description: "Report an issue" },
+                { id: "terms & conditions", title: "Terms & Conditions", description: "Or Visit https://bivi.online/terms-and-conditions." }
             ]
         }
     ]
 };
+
+
+
 module.exports = {WhatsAppmenu, googleChatMenu}

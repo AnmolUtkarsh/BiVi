@@ -297,72 +297,139 @@ async function BiVi_Reply(mess) {
 
 
 
-async function bivi_image(mess) {
+// async function bivi_image(mess) {
 
+//   const raw2 =
+//     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+//     mess.content || mess.body?.chat?.messagePayload?.message?.text ||
+//     "UNKNOWN";
+//   const userIDID =
+//     mess.author?.id ||
+//     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+//     mess.body?.chat?.messagePayload?.message?.sender?.name;
+//   // if (!filt(raw2).startsWith("image:")) return;
+// let temp_raw = filt(raw2);
+//   if (filt(raw2).startsWith("image:") || filt(raw2).startsWith(".image:")) {
+//     temp_raw = raw2.split(":").slice(1).join(":").trim();
+// }
+//     const modelsToTry = [
+//       "flux",
+//       "zimage",
+//       "gptimage",
+//       "klein",
+//       "p-image"
+//     ];
+
+//     for (const model of modelsToTry) {
+//       try {
+
+//         const history = getUserHistory(userIDID);
+//         const fullHistory = getFullHistory(userIDID);
+
+//         let url = `https://gen.pollinations.ai/image/${encodeURIComponent(temp_raw)}?model=${model}`;
+//         console.log(process.env.pollination_ai);
+//         const response = await fetch(
+//           url,
+//           {
+//             headers: {
+//               Authorization: `Bearer ${process.env.pollination_ai}`
+//             }
+//           }
+//         );
+
+//         if (response.ok) {
+//           console.log(`Image Generated with ${model}`);
+//           history.push({ role: "user", content: String(raw2) });
+//           history.push({ role: "assistant", content: "Image Created using" + model });
+
+//           fullHistory.push({
+//             role: "user",
+//             content: shorten(raw2)
+//           });
+
+//           fullHistory.push({
+//             role: "assistant",
+//             content: "Image Created using" + model
+//           });
+//           return url;
+//         }
+
+//         console.log(`${model} failed with status ${response.status}`);
+//       } catch (error) {
+//         console.error(`${model} failed:`, error);
+//       }
+//     }
+
+//     throw new Error("All image models failed.");
+//   }
+
+
+async function bivi_image(mess) {
   const raw2 =
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
     mess.content || mess.body?.chat?.messagePayload?.message?.text ||
     "UNKNOWN";
+
   const userIDID =
     mess.author?.id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.chat?.messagePayload?.message?.sender?.name;
-  // if (!filt(raw2).startsWith("image:")) return;
-let temp_raw = filt(raw2);
-  if (filt(raw2).startsWith("image:") || filt(raw2).startsWith(".image:")) {
-    temp_raw = raw2.split(":").slice(1).join(":").trim();
-}
-    const modelsToTry = [
-      "flux",
-      "zimage",
-      "gptimage",
-      "klein",
-      "p-image"
-    ];
 
-    for (const model of modelsToTry) {
-      try {
-
-        const history = getUserHistory(userIDID);
-        const fullHistory = getFullHistory(userIDID);
-
-        let url = `https://gen.pollinations.ai/image/${encodeURIComponent(temp_raw)}?model=${model}`;
-        console.log(process.env.pollination_ai);
-        const response = await fetch(
-          url,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.pollination_ai}`
-            }
-          }
-        );
-
-        if (response.ok) {
-          console.log(`Image Generated with ${model}`);
-          history.push({ role: "user", content: String(raw2) });
-          history.push({ role: "assistant", content: "Image Created using" + model });
-
-          fullHistory.push({
-            role: "user",
-            content: shorten(raw2)
-          });
-
-          fullHistory.push({
-            role: "assistant",
-            content: "Image Created using" + model
-          });
-          return url;
-        }
-
-        console.log(`${model} failed with status ${response.status}`);
-      } catch (error) {
-        console.error(`${model} failed:`, error);
-      }
-    }
-
-    throw new Error("All image models failed.");
+  let temp_raw = raw2;
+  if (temp_raw.toLowerCase().startsWith("image:")) {
+    temp_raw = temp_raw.substring(6).trim();
+  } else if (temp_raw.toLowerCase().startsWith(".image:")) {
+    temp_raw = temp_raw.substring(7).trim();
   }
 
+  // Keeping your exact verified platform list!
+  const modelsToTry = [
+    "flux",
+    "zimage",
+    "gptimage",
+    "klein",
+    "p-image"
+  ];
+
+  for (const model of modelsToTry) {
+    try {
+      let url = `https://gen.pollinations.ai/image/${encodeURIComponent(temp_raw)}?model=${model}`;
+      
+      console.log(`Requesting ${model}...`);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${process.env.pollination_ai}`
+        }
+      });
+
+      // Handle pollen exhaustion or rate-limiting silently to let fallback work
+      if (!response.ok) {
+        console.warn(`${model} returned status ${response.status}. Trying next model...`);
+        continue; 
+      }
+
+      console.log(`Image Generated successfully with ${model}`);
+
+      // ONLY mutate your history tracking arrays once the image is verified down the wire
+      const history = getUserHistory(userIDID);
+      const fullHistory = getFullHistory(userIDID);
+
+      history.push({ role: "user", content: String(raw2) });
+      history.push({ role: "assistant", content: "Image Created using " + model });
+
+      fullHistory.push({ role: "user", content: shorten(raw2) });
+      fullHistory.push({ role: "assistant", content: "Image Created using " + model });
+
+      return url; 
+    } catch (error) {
+      console.error(`Network or payload failure on ${model}:`, error.message);
+      // Fallback safely to the next model in line without crashing the outer app instance
+    }
+  }
+
+  throw new Error("All image models failed. Check your wallet balance or API key scopes.");
+}
 
 
 

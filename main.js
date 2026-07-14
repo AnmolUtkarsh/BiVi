@@ -231,7 +231,8 @@ const main = async (mess, client = null) => {
 				type: "awaiting_his_yes_no",
 				createdAt: Date.now()
 			});
-			return await reply(mess, "Current History Status: `" + uhh + "`\n\nWith BiVi 2.0, you can now change and set Whether you want to save you History or Not...\nHistory:\n\n" + impor + "\n\nYou can write: `History:On` or `History:Off`\n\nDo you want to change it? [`Yes`,`No`,`Exit`]");
+			return await reply(mess, "Current History Status: `" + uhh + "`\n\nWith BiVi 2.0, you can now change and set whether you want to save your *History or Not*...\nHistory:\n\n" + impor + "\n\nYou can write: `History:On` or `History:Off`");
+			await reply(mess, "> Do you want to change it?\n[ `Yes`, `No`, `Exit` ]")
 		}
 
 

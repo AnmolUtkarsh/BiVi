@@ -8,11 +8,19 @@
     --imp-text: #ff000d;
 
 
+--main-font: "OpenAI Sans", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
 
 
-
-
+    --temp: linear-gradient(145deg, #3f0581 0%, #260c1b 100%);
+    --temp2:
+        radial-gradient(circle at 50% 50%,
+            var(--pink) 0%,
+            var(--blue) 50%,
+            var(--pink) 100%);
+    /* Keeps gradient stable while scrolling */
+    --temp-color: #f3f0f5;
+    ;
 
     /* dark-colors: */
 
@@ -22,7 +30,7 @@
     --border-radius: 12px;
     --purple: #3b1515;
     --black: #0d0808;
-    --imp-text-dark:#eb246d;
+    --imp-text-dark: #eb246d;
 
 
 
@@ -37,15 +45,13 @@
     /* Platform cards */
     --discord: #5865F2;
     --whatsapp: linear-gradient(to bottom, #25D366, #1b9e4b);
-    --gchat: linear-gradient(to bottom, #77caf7  5%, #0d9e53 50%);
---insta: radial-gradient(
-  circle at 30% 107%,
-  #feda75 0%,
-  #fa7e1e 30%,
-  #b92165 55%,
-  #962fbf 75%,
-  #4f5bd5 100%
-);
+    --gchat: linear-gradient(to bottom, #77caf7 5%, #0d9e53 50%);
+    --insta: radial-gradient(circle at 30% 107%,
+            #feda75 0%,
+            #fa7e1e 30%,
+            #b92165 55%,
+            #962fbf 75%,
+            #4f5bd5 100%);
 
 
     /* platform shadows */

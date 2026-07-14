@@ -1,6 +1,12 @@
+*{
+    margin: 0;
+    padding:0;
+    font-family: var(--main-font);
+}
+
 header {
     width: 100vw;
-    height: 70px;
+    height: 65px;
     background: transparent;
     backdrop-filter: blur(10px);
     display: flex;
@@ -9,6 +15,7 @@ header {
     position: fixed;
     overflow: hidden;
     z-index: 1;
+    /* margin:100px; */
 }
 
 
@@ -16,7 +23,7 @@ header {
     font-family: 'Courier', Courier, monospace;
     color: white;
     text-decoration: none;
-    font-size: 45px;
+    font-size: 44px;
 }
 
 .Logo_BiVi {
@@ -28,20 +35,21 @@ header {
 
 .navbar {
     margin-left: auto;
-    margin-right: 20px;
+    margin-right: 50px;
 }
 
 nav ul {
     list-style: none;
     display: flex;
-    gap: 25px;
+    gap: 20px;
+
 }
 
 nav ul li,
 nav ul li a {
     display: inline-block;
     color: white;
-    font-size: 25px;
+    font-size: 21px;
     font-weight: bold;
     text-decoration: none;
 }

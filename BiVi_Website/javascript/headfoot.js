@@ -1,7 +1,13 @@
 async function load(id, path) {
-    document.getElementById(id).innerHTML =
-        await (await fetch(path)).text();
+    const response = await fetch(path);
+
+    if (!response.ok) {
+        console.error(`Failed to load ${path}: ${response.status}`);
+        return;
+    }
+
+    document.getElementById(id).innerHTML = await response.text();
 }
 
-load("header", "http://127.0.0.1:3000/BiVi_Website/components/header.html");
-load("footer", "http://127.0.0.1:3000/BiVi_Website/components/footer.html");
+load("header", "components/header.html");
+load("footer", "./components/footer.html");

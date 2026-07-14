@@ -6,7 +6,7 @@ const version = [
     "BiVi v1.5.0 Stable [AIO]",
     "BiVi_v1.5.1_Stable [AIO]",
     "BiVi_v1.5.2_Stable [AIO]",
-    "BiVi_v2.0.0_Stable [LTS]"
+    "BiVi v2.0.0 Stable [LTS]"
 ]
 const edition = {
     "BiVi v1.1.2 Stable [AIO]" : "AIO", //Discord
@@ -16,7 +16,7 @@ const edition = {
     "BiVi v1.5.0 Stable [AIO]" : "AIO", //Bug Fixed
     "BiVi_v1.5.1_Stable [AIO]" : "AIO", //Google Chats
     "BiVi_v1.5.2_Stable [AIO]" : "AIO",
-    "BiVi_v2.0.0_Stable [LTS]" : "LTS"
+    "BiVi v2.0.0 Stable [LTS]" : "LTS"
 }
 const fix = {
     "BiVi v1.1.2 Stable [AIO]" : "* ChatBot released on Discord and Webhooks removed. Side by Side testing for Custom Memory Management Architecture \n* Many Commands Added and many in queue for Under Construction with same Tag.", 
@@ -41,7 +41,7 @@ const fix = {
     "BiVi_v1.5.2_Stable [AIO]": "Lots of Bugs Fixed and one WhatsApp Webhook Error Fixed.\n* BiVi in Queue for testing History Mode and one Confidential Testings",
 
 
-    "BiVi_v2.0.0_Stable [LTS]": "BiVi in Queue for testing History Mode and one Confidential Testings",
+    "BiVi v2.0.0 Stable [LTS]": "BiVi in Queue for testing History Mode and one Confidential Testings.\n* Biggest Update till now in BiVi Series.\n* First LTS Edition.\n* Website of bivi.online is ready to deploy.\n* New CLI Introduced like `History`, `Modes`, `Language`, etc.\n* Biggest Update for whole BiVi Series.\n* Code Optimised to Depth.",
 }
 
 const new_info = `Introducing all new ${version} Hyper Edition Equiped with advance Command Handling System. For more info please enter: "verinfo"`

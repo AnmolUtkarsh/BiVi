@@ -433,141 +433,218 @@ const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === 
 }
 
 
+// async function GoogleChatHelloCard(mess, name, name1) {
+// const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
+//       ? `🙂‍↔️ Hi there ${name}`
+//       : `🙂‍↔️ Hi there ${name} aka ${name1}`;
+//     return {
+
+//         hostAppDataAction: {
+
+//             chatDataAction: {
+
+//                 createMessageAction: {
+
+//                     message: {
+
+//                         cardsV2: [
+
+//                             {
+
+//                                 cardId: "bivi_menu",
+
+//                                 card: {
+
+//                                     header: {
+
+//                                         title: googleChatMenu.title + "\n",
+
+//                                         subtitle: intro + "\n" +googleChatMenu.subtitle
+
+//                                     },
+
+//                                     sections: [
+
+//                                         // Body Section
+//                                         {
+
+//                                             widgets: [
+
+//                                                 {
+
+//                                                     textParagraph: {
+
+//                                                         text: googleChatMenu.body
+
+//                                                     }
+
+//                                                 }
+
+//                                             ]
+
+//                                         },
+
+//                                         // Command Sections
+//                                         ...googleChatMenu.sections.map(section => ({
+
+//                                             header: section.title,
+
+//                                             widgets: section.rows.map(row => ({
+
+//                                                 buttonList: {
+
+//                                                     buttons: [
+
+//                                                         {
+
+//                                                             text: row.title,
+
+//                                                             onClick: {
+
+//                                                                 action: {
+
+//                                                                     actionMethodName: row.id,
+
+//                                                                     parameters: [
+
+//                                                                         {
+
+//                                                                             key: "command",
+
+//                                                                             value: row.id
+
+//                                                                         }
+
+//                                                                     ]
+
+//                                                                 }
+
+//                                                             }
+
+//                                                         }
+
+//                                                     ]
+
+//                                                 }
+
+//                                             }))
+
+//                                         })),
+
+//                                         // Footer
+//                                         {
+
+//                                             widgets: [
+
+//                                                 {
+
+//                                                     textParagraph: {
+
+//                                                         text: `<i>${googleChatMenu.footer}</i>`
+
+//                                                     }
+
+//                                                 }
+
+//                                             ]
+
+//                                         }
+
+//                                     ]
+
+//                                 }
+
+//                             }
+
+//                         ]
+
+//                     }
+
+//                 }
+
+//             }
+
+//         }
+
+//     };
+
+// }
+
+
+
+
 async function GoogleChatHelloCard(mess, name, name1) {
-const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
-      ? `🙂‍↔️ Hi there ${name}`
-      : `🙂‍↔️ Hi there ${name} aka ${name1}`;
+    const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
+        ? `🙂‍↔️ Hi there ${name}`
+        : `🙂‍↔️ Hi there ${name} aka ${name1}`;
+
     return {
-
         hostAppDataAction: {
-
             chatDataAction: {
-
                 createMessageAction: {
-
                     message: {
-
                         cardsV2: [
-
                             {
-
                                 cardId: "bivi_menu",
-
                                 card: {
-
                                     header: {
-
-                                        title: googleChatMenu.title + "\n",
-
-                                        subtitle: intro + "\n" +googleChatMenu.subtitle
-
+                                        title: googleChatMenu.title,
+                                        subtitle: intro + "\n" + googleChatMenu.subtitle
                                     },
-
                                     sections: [
-
                                         // Body Section
                                         {
-
                                             widgets: [
-
                                                 {
-
                                                     textParagraph: {
-
                                                         text: googleChatMenu.body
-
                                                     }
-
                                                 }
-
                                             ]
-
                                         },
-
                                         // Command Sections
                                         ...googleChatMenu.sections.map(section => ({
-
                                             header: section.title,
-
                                             widgets: section.rows.map(row => ({
-
                                                 buttonList: {
-
                                                     buttons: [
-
                                                         {
-
                                                             text: row.title,
-
                                                             onClick: {
-
                                                                 action: {
-
-                                                                    actionMethodName: row.id,
-
+                                                                    actionMethodName: "handleMenuCommand", // Generic execution function recommended instead of arbitrary runtime IDs
                                                                     parameters: [
-
                                                                         {
-
-                                                                            key: "command",
-
+                                                                            name: "command", // Updated from 'key' to 'name' for Cards V2 specs
                                                                             value: row.id
-
                                                                         }
-
                                                                     ]
-
                                                                 }
-
                                                             }
-
                                                         }
-
                                                     ]
-
                                                 }
-
                                             }))
-
                                         })),
-
-                                        // Footer
+                                        // Footer Section
                                         {
-
                                             widgets: [
-
                                                 {
-
                                                     textParagraph: {
-
-                                                        text: `<i>${googleChatMenu.footer}</i>`
-
+                                                        text: googleChatMenu.footer // Dropped unsupported custom HTML tags
                                                     }
-
                                                 }
-
                                             ]
-
                                         }
-
                                     ]
-
                                 }
-
                             }
-
                         ]
-
                     }
-
                 }
-
             }
-
         }
-
     };
-
 }
 
 function getPlatform(mess) {
