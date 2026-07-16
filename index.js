@@ -8,7 +8,7 @@ require("dotenv").config()
 const { incom_mess } = require('./cont.js')
 
 const port = process.env.PORT || 3000;
-const verifyToken = process.env.verify_token;
+// const verifyToken = process.env.verify_token;
 // const {
   // fetching } = require('./controller.js')
 const { main } = require('./main.js')
@@ -36,7 +36,7 @@ client.once(Events.ClientReady, async (readyClient) => {
   }
   catch (error) {
     console.log("Error Starting the Server!");
-    res.sendStatus(200);
+    // res.sendStatus(200);
   }
   });
 
@@ -50,12 +50,18 @@ app.use(express.json());
 app.get('/webhook', (mess, res) => {
   const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = mess.query;
 
-  if (mode === 'subscribe' && token === verifyToken) {
-    console.log('WEBHOOK VERIFIED');
-    res.status(200).send(challenge);
-  } else {
-    res.status(403).end();
-  }
+ if (
+    mode === "subscribe" &&
+    (
+        token === process.env.verify_token ||
+        token === process.env.verify_token_ig
+    )
+) {
+    console.log("WEBHOOK VERIFIED");
+    return res.status(200).send(challenge);
+}
+
+return res.sendStatus(403);
 });
 
 app.post('/webhook', async (req, res) => {
@@ -90,7 +96,7 @@ app.post('/webhook', async (req, res) => {
         return res.sendStatus(200);
       }
     }
-    // const message = event.chat?.messagePayload?.message;
+    // const messaage = event.chat?.messagePayload?.message;
     else if (event?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
       console.log("WhatsApp message event received");
       res.sendStatus(200);
