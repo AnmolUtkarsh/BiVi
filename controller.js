@@ -76,7 +76,35 @@ async function indi_image_send(mess) {
 
 
 
-
+    if (mess.body?.object === "instagram") {
+        const recipientId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
+        try {
+            const response = await fetch(
+                `https://graph.facebook.com/v25.0/me/messages?access_token=${process.env.uhh}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        recipient: {
+                            id: recipientId
+                        },
+                        message: {
+                            attachment: {
+                                type: "image",
+                                payload: {
+                                    url: imageUrl
+                                }
+                            }
+                        }
+                    })
+                }
+            );
+        } catch (error) {
+            console.log("Failed to execute fetch to Meta API:", err);
+        }
+    }
 
     if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
         const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
@@ -205,14 +233,48 @@ async function indi_reply(mess, value) {
 
 
 
+    if (mess.body?.object === 'instagram') {
+        const recipientId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
+        // const incomingMessageId = mess.entry?.[0]?.messaging?.[0]?.mid;
+        try {
+            const response = await fetch(
+                `https://graph.instagram.com/v25.0/${process.env.instagram_ig_id}/messages`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${process.env.instagram_access_token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "recipient": {
+                            "id": recipientId
+                        },
+                        "message": {
+                            "text": value
+                        }
+                    })
+                }
+            );
+
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("Instagram API Error Response:", data);
+            } else {
+                console.log("Message sent successfully:", data.messages?.[0]?.id);
+            }
+        }
+        catch (error) {
+            console.log("Error in Sending Individual Message in Instagram!");
+        }
+    }
 
 
 
 
     if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
         const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
-        const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
+        // const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
         if (!recipientId) {
             console.log("Webhook received, but it's a status update (delivered/read), not an incoming message.");
             return;
@@ -302,12 +364,59 @@ async function reply(mess, value) {
     // }
 
 
+    if (mess.body?.object === 'instagram') {
+        const recipientId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
+        const incomingMessageId = mess.body?.entry?.[0]?.messaging?.[0]?.message?.mid;
+        console.log(JSON.stringify({
+            recipient: {
+                id: recipientId
+            },
+            message: {
+                text: value
+            }
+        }, null, 2));
+        try {
+            const response = await fetch(
+                `https://graph.facebook.com/v25.0/${process.env.page_id}/messages`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${process.env.uhh}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "recipient": {
+                            "id": recipientId
+                        },
+                        "message": {
+                            "text": value
+                        },
+                        reply_to: {
+                            mid: incomingMessageId
+                        }
+                    })
+                }
+            );
 
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("Instagram API Error Response:", data);
+            } else {
+                console.log("Message sent successfully:", data);
+            }
+        }
+        catch (err) {
+            console.error("Failed to execute fetch to Meta API:", err);
+        }
+    }
 
     if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
+
         const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+
         const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
+
         if (!recipientId) {
             console.log("Webhook received, but it's a status update (delivered/read), not an incoming message.");
             return;
@@ -368,9 +477,9 @@ async function WhatsAppHelloCard(mess, name, name1) {
 
     if (!recipientId) return;
 
-const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
-      ? `🙂‍↔️ Hi there ${name}`
-      : `🙂‍↔️ Hi there ${name} aka ${name1}`;
+    const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
+        ? `🙂‍↔️ Hi there ${name}`
+        : `🙂‍↔️ Hi there ${name} aka ${name1}`;
     const payload = {
 
         messaging_product: "whatsapp",
@@ -731,63 +840,66 @@ async function buildInteractiveMessage(mess, menu) {
 
 
 
-    async function del(mess) {
+async function del(mess) {
 
-        const googleMessage =
-            mess.body?.chat?.messagePayload?.message;
-
-
-        // Google Chat Webhook
-        if (googleMessage) {
-
-            const repliedMessage =
-                googleMessage?.referencedMessage;
+    const googleMessage =
+        mess.body?.chat?.messagePayload?.message;
 
 
-            const messageName =
-                repliedMessage?.name;
+    // Google Chat Webhook
+    if (googleMessage) {
+
+        const repliedMessage =
+            googleMessage?.referencedMessage;
 
 
-            if (!messageName) {
-                console.log("No replied Google message found");
-                return;
-            }
+        const messageName =
+            repliedMessage?.name;
 
 
-            const token = process.env.google_chats_token;
-
-
-            const response = await fetch(
-                `https://chat.googleapis.com/v1/${messageName}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                }
-            );
-
-
-            if (!response.ok) {
-                console.log(
-                    "Google delete failed:",
-                    await response.text()
-                );
-            }
-
+        if (!messageName) {
+            console.log("No replied Google message found");
             return;
         }
 
 
-        // Discord
-        if (mess.fetchReference) {
-            const repliedMessage = await mess.fetchReference();
-            return await repliedMessage.delete();
+        const token = process.env.google_chats_token;
+
+
+        const response = await fetch(
+            `https://chat.googleapis.com/v1/${messageName}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+
+        if (!response.ok) {
+            console.log(
+                "Google delete failed:",
+                await response.text()
+            );
         }
+
+        return;
     }
 
+
+    // Discord
+    if (mess.fetchReference) {
+        const repliedMessage = await mess.fetchReference();
+        return await repliedMessage.delete();
+    }
+}
+
 const clear = async (mess, session, sessions) => {
-    const userIDID = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.user?.name;
+    const userIDID = mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+        mess.body?.chat?.user?.name ||
+        mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
     const input = mess.content.toLowerCase();
     if (session.step !== "awaiting_confirm") return;
 
@@ -877,4 +989,4 @@ function fetching() {
     }
 }
 
-module.exports = { indi_reply, filt, reply, del, clear, checker, fetching, indi_image_send , WhatsAppHelloCard, GoogleChatHelloCard}
+module.exports = { indi_reply, filt, reply, del, clear, checker, fetching, indi_image_send, WhatsAppHelloCard, GoogleChatHelloCard }

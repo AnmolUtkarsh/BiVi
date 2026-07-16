@@ -51,7 +51,7 @@ const WillFam1 = [
 
 async function storyplay(mess, storys, num = 15, sessions) {
 
-    const userId = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id || mess.body?.chat?.user?.name;
+    const userId = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id || mess.body?.chat?.user?.name || mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
     sessions.set((userId), { type: "Playing_Story" });
     if (!isNaN(num)) {

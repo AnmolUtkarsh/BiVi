@@ -102,6 +102,17 @@ app.post('/webhook', async (req, res) => {
       }
       return;
     }
+    else if (event?.object === 'instagram') {
+      console.log("Instagram message event received");
+      res.sendStatus(200);
+      try {
+        // await incom_mess(req, res);
+        await main(req, client);
+      } catch (err) {
+        console.error("Webhook Error in Instagram:", err);
+      }
+      return;
+    }
     else if (event?.entry?.[0]?.changes?.[0]?.value?.statuses) {
       return res.sendStatus(200);
     }

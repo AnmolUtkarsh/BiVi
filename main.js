@@ -12,6 +12,7 @@ const { moods, getUserMood, userMoods } = require('./mood.js')
 const { languages, getUserLanguage, userLanguage } = require('./lang.js');
 const { isHistoryEnabled, historyFetch, userHistoryPrefs } = require('./history_save.js');
 const { isGroupModeEnabled, groups } = require('./group.js');
+const { instagramProfileFetch } = require('./cont.js');
 
 const TimeOut = 60 * 1000;
 
@@ -24,13 +25,14 @@ const main = async (mess, client = null) => {
 	}
 	// let slash = "";
 	let platform = "None"
+	// let profile = "";
 	if (mess.author?.bot === true) return;
 
 
 
 	const raw1 =
 		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
-		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id ||
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id || mess?.body?.entry?.[0]?.messaging?.[0]?.message?.text ||
 		mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
 		"";
 	const messageType =
@@ -40,11 +42,12 @@ const main = async (mess, client = null) => {
 	}
 	// const filtered = filt(raw1);
 
-	const userId = mess?.author?.id ||
+	const userId = mess.author?.id ||
 		// mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
 		mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
 		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
-		mess.body?.chat?.user?.name;
+		mess.body?.chat?.user?.name ||
+		mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
 	const chatId =
 		mess.guild?.id ||
@@ -64,6 +67,18 @@ const main = async (mess, client = null) => {
 		}
 		else if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
 			platform = 'whatsapp';
+		}
+		else if (mess.body?.object === "instagram") {
+			platform = 'instagram'
+			const event = mess.body.entry?.[0]?.messaging?.[0];
+
+			if (!event) return;
+			if (!event.message) return;
+			if (event.message.is_echo) return;
+			if (event.read) return;
+			if (event.delivery) return;
+
+			var profile = await instagramProfileFetch(mess);
 		}
 		else if (mess.author?.id) {
 			platform = 'discord';
@@ -149,38 +164,38 @@ const main = async (mess, client = null) => {
 			}
 		}
 
-		
+
 		// if (filtered.replace(/^\./, "").startsWith("image:")) {
-			// 	return await indi_image_send(mess);
-			// }
-			// if (filtered.replace(/^\./, "").startsWith("search:")) {
-				// 	return await BiVi_Search(mess);
-				// }
-				
-				
-				if (!isHistoryEnabled(userId)) {
-					fullHistories.delete(userId);
-					chatHistories.delete(userId);
-				}
-				
-				const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName;
-				const value = filt(raw);
-				
-				
-				if (wantsSearch) {
-					try {
-						const result = await BiVi_Search(mess);
-						logToFullHistory(userId, chatId, value, shorten(result)
-						);
-						return await reply(mess, result);
-					} catch (er) {
-						await indi_reply(mess, "Error in Searching on Internet...");
-						logToFullHistory(userId, chatId, value, "Error in Searching on Internet..."
-						);
-						return await reply(mess, await checker(mess));
-					}
-				}
-				
+		// 	return await indi_image_send(mess);
+		// }
+		// if (filtered.replace(/^\./, "").startsWith("search:")) {
+		// 	return await BiVi_Search(mess);
+		// }
+
+
+		if (!isHistoryEnabled(userId)) {
+			fullHistories.delete(userId);
+			chatHistories.delete(userId);
+		}
+
+		const name = mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName || profile?.displayName || `Instagram User ${userId}`;
+		const value = filt(raw);
+
+
+		if (wantsSearch) {
+			try {
+				const result = await BiVi_Search(mess);
+				logToFullHistory(userId, chatId, value, shorten(result)
+				);
+				return await reply(mess, result);
+			} catch (er) {
+				await indi_reply(mess, "Error in Searching on Internet...");
+				logToFullHistory(userId, chatId, value, "Error in Searching on Internet..."
+				);
+				return await reply(mess, await checker(mess));
+			}
+		}
+
 
 
 		if (
@@ -911,7 +926,14 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 				// WhatsAppHelloCard, GoogleChatHelloCard
 				// 				logToFullHistory(userId, chatId, value, hello(mess, (name), (mess.author?.username || name)))
 				// 				return reply(mess, hello(mess, (name), (mess.author?.username || name)) + end())
-
+				// if(platform === "instagram"){
+				// 	profile = await instagramProfileFetch(mess);
+				// 	return await reply(mess,
+				// 					hello(mess, name, mess.author?.username || name) + end())
+				// }
+				if (platform === 'instagram') {
+					return await reply(mess, hello(mess, profile.displayName || `Instagram User ${userId}`, profile.username || `Instagram User ${userId}`));
+				}
 				if (platform === "whatsapp" || platform === "whatsapp_group") {
 
 					return await WhatsAppHelloCard(mess, name, mess.author?.username || name);
@@ -984,7 +1006,7 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 						
 						*${j}*
 						
-						Note: This is a Featured Section of BiVi, introduced in BiVi's Unstable v1.0.5\n\nDo You Want to Listen to any Story in the given List of Stories?\nExpected Input [Yes/No/Exit]`)
+						Do You Want to Listen to any Story in the given List of Stories?\n[ \`Yes\` / \`No\`/ \`Exit]\``);
 
 
 
