@@ -10,7 +10,7 @@ const { incom_mess } = require('./cont.js')
 const port = process.env.PORT || 3000;
 // const verifyToken = process.env.verify_token;
 // const {
-  // fetching } = require('./controller.js')
+// fetching } = require('./controller.js')
 const { main } = require('./main.js')
 const express = require('express');
 const { errmsg } = require('./messages');
@@ -28,7 +28,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, async (readyClient) => {
-    try {
+  try {
     console.log("Turning ON Server and Turning on BiVi Listener!")
     console.log(`Server and Listener is Ready! 
 			Logining in as ${readyClient.user.tag}`);
@@ -38,7 +38,7 @@ client.once(Events.ClientReady, async (readyClient) => {
     console.log("Error Starting the Server!");
     // res.sendStatus(200);
   }
-  });
+});
 
 
 const app = express();
@@ -50,18 +50,18 @@ app.use(express.json());
 app.get('/webhook', (mess, res) => {
   const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = mess.query;
 
- if (
+  if (
     mode === "subscribe" &&
     (
-        token === process.env.verify_token ||
-        token === process.env.verify_token_ig
+      token === process.env.verify_token ||
+      token === process.env.verify_token_ig
     )
-) {
+  ) {
     console.log("WEBHOOK VERIFIED");
     return res.status(200).send(challenge);
-}
+  }
 
-return res.sendStatus(403);
+  return res.sendStatus(403);
 });
 
 app.post('/webhook', async (req, res) => {
@@ -157,9 +157,9 @@ client.login(process.env.discord_token)
   .catch(err => console.log("Error logging into Discord:", err));
 
 process.on("SIGTERM", () => {
-    console.log("Received SIGTERM");
-    client.destroy();
-    process.exit(0);
+  console.log("Received SIGTERM");
+  client.destroy();
+  process.exit(0);
 });
 
 process.on("SIGINT", () => {
@@ -169,8 +169,8 @@ process.on("SIGINT", () => {
   process.exit(0);
 })
 process.on("unhandledRejection", (reason) => {
-    console.error(reason);
+  console.error(reason);
 });
 process.on("uncaughtException", (err) => {
-    console.error(err);
+  console.error(err);
 });

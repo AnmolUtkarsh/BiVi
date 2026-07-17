@@ -19,7 +19,7 @@ function unfinished() {
 
 function verhistory() {
    let text = "";
-   for (i of version) {
+   for (let i of version) {
       text = text + "\n" + i
    }
    return text + "\nWrite `verfix` to see the Version Fixes!";
@@ -353,7 +353,7 @@ function serverInfo() {
       "Note: Server status information is collected using external servers.\n\n" +
       "*=== SERVER LOAD DETAILS ===*\n\n" +
       "* *1s Capacity*: `" + "10520 Con-Current Users" + "`\n" +
-      "* *Total BandWidth*: `" + "100TB" + "`\n\n" +
+      "* *Total Bandwidth*: `" + "100TB" + "`\n\n" +
       // "* *Total BandWidth*: `" + "100TB" + "`\n" +
       "Details Fetched in:";
 }
@@ -659,17 +659,17 @@ function ownerinfo(message) {
 
 
 function discord() {
-   return "Hi there,\nThe Link for BiVi Official Discord ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
+   return "Hi there,\n> The Link for BiVi Official Discord ChatBot is:\n\n*https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot*" + version_info
 }
 function whatsapp() {
-   return "Hi there,\nThe Link for BiVi Official Discord ChatBot is:\n\n*_https://wa.me/917294132087_*"
+   return "Hi there,\n> The Link for BiVi Official WhatsApp ChatBot is:\n\n*https://wa.me/917294132087*" + version_info
 }
 function chats() {
-   return "Hi there,\nThe Link for Google Chats BiVi Official ChatBot is:\n\n*_https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot_*"
+   return "Hi there,\n> The Link for Google Chats BiVi Official ChatBot is:\n\n*Link Coming Soon!*" + version_info
 
 }
 function tac() {
-   return "T and C."
+   return "Terms and Conditions: https://bivi.online/terms-and-conditions\n\n> External Document: Privacy Policy: https://bivi.online/privacy-policy"
 
 }
 

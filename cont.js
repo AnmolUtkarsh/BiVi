@@ -156,10 +156,10 @@ console.log(process.env.phone_number_id, process.env.whatsapp_api_test)
 async function instagramProfileFetch(mess) {
     try {
         // const userId = "17841416939972611";
-        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
+        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.message?.sender?.id;
 
         const response = await fetch(
-            `https://graph.instagram.com/v25.0/${userId}?fields=id,name,username,profile_pic,is_verified_user,follower_count,is_user_follow_business,is_business_follow_user&access_token=${process.env.instagram_access_token}`
+            `https://graph.instagram.com/v25.0/${userId}?fields=id,name,username,profile_pic,is_verified_user,follower_count,is_user_follow_business,is_business_follow_user&access_token=${process.env.uhh}`
         );
 
         const data = await response.json();
@@ -198,10 +198,10 @@ async function instagramBiViProfileFetch(mess) {
     try {
         // Fix 1: Ensure the ID is a string to prevent JavaScript from rounding the last digit
         // const userId = "17841416939972611";
-        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id
+        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.message?.sender?.id
 
         const response = await fetch(
-            `https://graph.facebook.com/v25.0/${userId}?fields=id,name,username,followers_count,follows_count,ig_id,profile_picture_url,website&access_token=${process.env.instagram_access_token}`
+            `https://graph.facebook.com/v25.0/${userId}?fields=id,name,username,followers_count,follows_count,ig_id,profile_picture_url,website&access_token=${process.env.uhh}`
         );
 
         const data = await response.json();

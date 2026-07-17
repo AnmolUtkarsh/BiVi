@@ -43,7 +43,7 @@ const main = async (mess, client = null) => {
 	// const filtered = filt(raw1);
 
 	const userId = mess.author?.id ||
-		// mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+		mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
 		mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
 		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
 		mess.body?.chat?.user?.name ||
@@ -246,8 +246,8 @@ const main = async (mess, client = null) => {
 				type: "awaiting_his_yes_no",
 				createdAt: Date.now()
 			});
-			return await reply(mess, "Current History Status: `" + uhh + "`\n\nWith BiVi 2.0, you can now change and set whether you want to save your *History or Not*...\nHistory:\n\n" + impor + "\n\nYou can write: `History:On` or `History:Off`");
-			await reply(mess, "> Do you want to change it?\n[ `Yes`, `No`, `Exit` ]")
+			await reply(mess, "Current History Status: `" + uhh + "`\n\nWith BiVi 2.0, you can now change and set whether you want to save your *History or Not*...\nHistory:\n\n" + impor + "\n\nYou can write: `History:On` or `History:Off`");
+			return await reply(mess, "> Do you want to change it?\n[ `Yes`, `No`, `Exit` ]")
 		}
 
 

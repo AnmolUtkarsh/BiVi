@@ -243,7 +243,7 @@ async function indi_reply(mess, value) {
                 {
                     method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${process.env.instagram_access_token}`,
+                        "Authorization": `Bearer ${process.env.uhh}`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
@@ -403,7 +403,7 @@ async function reply(mess, value) {
             if (!response.ok) {
                 console.error("Instagram API Error Response:", data);
             } else {
-                console.log("Message sent successfully:", data);
+                console.log("Message sent successfully: ON Instagram");
             }
         }
         catch (err) {
@@ -897,6 +897,8 @@ async function del(mess) {
 
 const clear = async (mess, session, sessions) => {
     const userIDID = mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
         mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
         mess.body?.chat?.user?.name ||
         mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;

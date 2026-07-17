@@ -55,7 +55,12 @@ function filt(value) {
 
 function perMemory(mess) {
 
-  const userId = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.user?.name;
+  const userId = mess.author?.id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
   const currentMood = getUserMood(userId);
   const moodData =
     Object.values(moods).find(
@@ -73,8 +78,16 @@ function perMemory(mess) {
 }
 async function getGroqChatCompletion(mess) {
 
-  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || mess.body?.chat?.messagePayload?.message?.text || mess.content;
-  const userIDID = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.messagePayload?.message?.sender?.name
+  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id || mess?.body?.entry?.[0]?.messaging?.[0]?.message?.text ||
+    mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
+    "";
+  const userIDID = mess.author?.id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
 
 
@@ -147,8 +160,16 @@ async function getGroqChatCompletion(mess) {
 // }
 
 async function group_reply(mess) {
-  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || mess.body?.chat?.messagePayload?.message?.text || mess.content;
-  const userIDID = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.messagePayload?.message?.sender?.name
+  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id || mess?.body?.entry?.[0]?.messaging?.[0]?.message?.text ||
+    mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
+    "";
+  const userIDID = mess.author?.id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
   const chatId =
     mess.guild?.id ||
     mess.channel?.id ||
@@ -208,8 +229,16 @@ const { OpenAI } = require("openai");
 async function BiVi_Search(mess) {
 
 
-  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || mess.body?.chat?.messagePayload?.message?.text || mess.content;
-  const userIDID = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.messagePayload?.message?.sender?.name
+  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id || mess?.body?.entry?.[0]?.messaging?.[0]?.message?.text ||
+    mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
+    "";
+  const userIDID = mess.author?.id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
 
 
@@ -372,8 +401,11 @@ async function bivi_image(mess) {
 
   const userIDID =
     mess.author?.id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
-    mess.body?.chat?.messagePayload?.message?.sender?.name;
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
   let temp_raw = raw2;
   if (temp_raw.toLowerCase().startsWith("image:")) {
@@ -394,7 +426,7 @@ async function bivi_image(mess) {
   for (const model of modelsToTry) {
     try {
       let url = `https://gen.pollinations.ai/image/${encodeURIComponent(temp_raw)}?model=${model}`;
-      
+
       console.log(`Requesting ${model}...`);
       const response = await fetch(url, {
         method: "GET",
@@ -406,7 +438,7 @@ async function bivi_image(mess) {
       // Handle pollen exhaustion or rate-limiting silently to let fallback work
       if (!response.ok) {
         console.warn(`${model} returned status ${response.status}. Trying next model...`);
-        continue; 
+        continue;
       }
 
       console.log(`Image Generated successfully with ${model}`);
@@ -421,7 +453,7 @@ async function bivi_image(mess) {
       fullHistory.push({ role: "user", content: shorten(raw2) });
       fullHistory.push({ role: "assistant", content: "Image Created using " + model });
 
-      return url; 
+      return url;
     } catch (error) {
       console.error(`Network or payload failure on ${model}:`, error.message);
       // Fallback safely to the next model in line without crashing the outer app instance
@@ -453,8 +485,16 @@ async function BiVi_Force_Reply(mess) {
 
 
 
-  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || mess.body?.chat?.messagePayload?.message?.text || mess.content;
-  const userIDID = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.messagePayload?.message?.sender?.name
+  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id || mess?.body?.entry?.[0]?.messaging?.[0]?.message?.text ||
+    mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
+    "";
+  const userIDID = mess.author?.id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
 
 
@@ -514,8 +554,16 @@ async function BiVi_Force_Reply(mess) {
 
 async function BiVi(mess) {
 
-  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || mess.body?.chat?.messagePayload?.message?.text || mess.content;
-  const userIDID = mess.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id || mess.body?.chat?.messagePayload?.message?.sender?.name
+  const text = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id || mess?.body?.entry?.[0]?.messaging?.[0]?.message?.text ||
+    mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
+    "";
+  const userIDID = mess.author?.id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
 
   try {

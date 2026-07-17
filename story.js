@@ -51,7 +51,13 @@ const WillFam1 = [
 
 async function storyplay(mess, storys, num = 15, sessions) {
 
-    const userId = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id || mess.body?.chat?.user?.name || mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
+    // const userId = mess?.author?.id || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id || mess.body?.chat?.user?.name || mess.body?.entry?.[0]?.messaging?.[0]?.message?.sender?.id;
+    const userId = mess.author?.id ||
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+        mess.body?.chat?.user?.name ||
+        mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
     sessions.set((userId), { type: "Playing_Story" });
     if (!isNaN(num)) {
@@ -77,7 +83,7 @@ Restart -> Restarting the Story.
 In between the Story if you write External Commands, it will not work for the User who initiated this Story, For everybody else the external commands will work!`)
             let st = setTimeout(() => {
                 let i = 0;
-                
+
 
 
 
@@ -86,26 +92,26 @@ In between the Story if you write External Commands, it will not work for the Us
                 const interval2 = setInterval(async () => {
                     const currentSession = sessions.get(userId);
 
-                if(!currentSession || currentSession.type == "Stopped"){
-                    clearInterval(interval2);
-                    sessions.delete(userId);
-                    return;
-                }
-                if(!currentSession || currentSession.type == "Paused"){
-                    return;
-                }
+                    if (!currentSession || currentSession.type == "Stopped") {
+                        clearInterval(interval2);
+                        sessions.delete(userId);
+                        return;
+                    }
+                    if (!currentSession || currentSession.type == "Paused") {
+                        return;
+                    }
 
-                if (currentSession.type == "Restart"){
-                    
-                    i = 0;
-                    sessions.set(userId,{
-                        type: "Playing_Story"
-                    })
-                    return;
-                }
-                    
-                    
-                    
+                    if (currentSession.type == "Restart") {
+
+                        i = 0;
+                        sessions.set(userId, {
+                            type: "Playing_Story"
+                        })
+                        return;
+                    }
+
+
+
                     if (i >= story[1].length) {
                         clearInterval(interval2);
                         sessions.delete(userId)

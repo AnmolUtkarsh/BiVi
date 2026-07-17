@@ -41,7 +41,7 @@ const fix = {
     "BiVi_v1.5.2_Stable [AIO]": "Lots of Bugs Fixed and one WhatsApp Webhook Error Fixed.\n* BiVi in Queue for testing History Mode and one Confidential Testings",
 
 
-    "BiVi v2.0.0 Stable [LTS]": "BiVi in Queue for testing History Mode and one Confidential Testings.\n* Biggest Update till now in BiVi Series.\n* First LTS Edition.\n* Website of bivi.online is ready to deploy.\n* New CLI Introduced like `History`, `Modes`, `Language`, etc.\n* Biggest Update for whole BiVi Series.\n* Code Optimised to Depth.\n* Updating BiVi on Instagram",
+    "BiVi v2.0.0 Stable [LTS]": "BiVi in Queue for testing History Mode and one Confidential Testings.\n* Biggest Update till now in BiVi Series.\n* First LTS Edition.\n* Website of bivi.online is ready to deploy.\n* New CLI Introduced like `History`, `Modes`, `Language`, etc.\n* Biggest Update for whole BiVi Series.\n* Code Optimised to Depth.\n* Updating BiVi for Instagram Build",
 }
 
 const new_info = `Introducing all new ${version} Hyper Edition Equiped with advance Command Handling System. For more info please enter: "verinfo"`
