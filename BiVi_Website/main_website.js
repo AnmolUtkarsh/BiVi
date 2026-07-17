@@ -21,7 +21,10 @@ app.get("/privacy-policy", (req, res) => {
 app.get("/coming-soon", (req, res) => {
     res.sendFile(path.join(__dirname, "coming.html"));
 });
-
+app.get("/auth/instagram/callback", async (req, res) => {
+    console.log(req.query);
+    res.send("Instagram Login Successful");
+});
 app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, "error.html"));
 });
