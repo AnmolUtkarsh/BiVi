@@ -43,11 +43,10 @@ const main = async (mess, client = null) => {
 	// const filtered = filt(raw1);
 
 	const userId = mess.author?.id ||
-		mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
-		mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
-		mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
-		mess.body?.chat?.user?.name ||
-		mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
+    mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
+    mess.body?.chat?.user?.name ||
+    mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
 	const chatId =
 		mess.guild?.id ||
@@ -922,6 +921,10 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 
 
 		if (typeof command[value] === "function" || commands_arr.includes(value) || Object.keys(store).includes(value)) {
+			if(value == "hello."){
+				return await reply(mess,
+					hello(mess, name, mess.author?.username || name))
+			}
 			if (value == "hello" || value == "hi") {
 				// WhatsAppHelloCard, GoogleChatHelloCard
 				// 				logToFullHistory(userId, chatId, value, hello(mess, (name), (mess.author?.username || name)))
@@ -950,8 +953,8 @@ ${hehe[0][0]}\n${hehe[0][1]}\n${hehe[0][2]}\n${hehe[0][3]} , ${hehe[0][4]}\n${he
 					hello(mess, name, mess.author?.username || name)
 				);
 
-				return reply(
-					mess,
+				return await reply(
+					mess, await 
 					hello(mess, name, mess.author?.username || name) + end()
 				);
 			}

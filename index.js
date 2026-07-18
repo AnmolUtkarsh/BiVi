@@ -13,7 +13,7 @@ const port = process.env.PORT || 3000;
 // fetching } = require('./controller.js')
 const { main } = require('./main.js')
 const express = require('express');
-const { errmsg } = require('./messages');
+// const { errmsg } = require('./messages');
 
 
 
@@ -101,7 +101,7 @@ app.post('/webhook', async (req, res) => {
       console.log("WhatsApp message event received");
       res.sendStatus(200);
       try {
-        await incom_mess(req, res);
+        await incom_mess(req);
         await main(req, client);
       } catch (err) {
         console.error("Webhook Error in WhatsApp:", err);

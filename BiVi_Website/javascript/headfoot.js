@@ -9,5 +9,6 @@ async function load(id, path) {
     document.getElementById(id).innerHTML = await response.text();
 }
 
-load("header", "components/header.html");
+// load("header", "components/header.html");
+load("header", "./components/header.html");
 load("footer", "./components/footer.html");

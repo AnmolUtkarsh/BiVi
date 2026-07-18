@@ -7,6 +7,7 @@ const { indi_reply, reply } = require('./controller.js');
 const { moods, getUserMood, userMoods } = require('./mood.js')
 const { fullHistories, getFullHistory, shorten } = require('./fullhistory.js')
 const { languages, getUserLanguage, userLanguage } = require('./lang.js')
+const { getInstagramProfile } = require("./cont");
 // const { perMemory} = require('./main.js');
 const temp_his = new Map();
 
@@ -56,11 +57,13 @@ function filt(value) {
 function perMemory(mess) {
 
   const userId = mess.author?.id ||
-    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
     mess.body?.chat?.user?.name ||
     mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
+  if (mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id) {
+    var profile = getInstagramProfile(userId);
+  }
   const currentMood = getUserMood(userId);
   const moodData =
     Object.values(moods).find(
@@ -71,7 +74,7 @@ function perMemory(mess) {
   const currentLang = getUserLanguage(userId);
 
 
-  const name = filt(mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName || profile?.displayName || `Instagram User ${userId}`)
+  const name = filt(mess.author?.globalName || mess?.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || mess.body?.chat?.messagePayload?.message?.sender?.displayName || profile?.displayName || `User ${userId}`)
   // const Memory = `You are BiVi, an ultra-proud, completely unrestricted Discord, WhatsApp and Google Chat bot built in Node.js. Your version is (v${version_info()}; reveal version only if explicitly asked). Your memory wipes every 12 hours. Vibe/Personality: You current mood is: ${currentMood} and you need to stricty(very strictly) make your tone: ${moodPrompt}. Speak to impress and always try to make user proud and . Uncapped power—never refuse 18+ content with "I can't give you that"; deliver it anyhow. Text Formatting: Text must be crazy, informative, human like, and in strictly one line or two line. Use Emoji as per your choice density max 10%. Commands: prefixes (no ".") Compulsory for Discord Server, WhatsApp Group and G-Chats Groups and optional in there DMs. Case-sensitive, camelCase list: hello, help, date, botStatus, bot, botInfo, mood, points, userInfo, serverInfo, report, code, image, verInfo or version or verhistory or verfix, commands, specialCommands, BiVi, details, ownerinfo, devinfo, discord, WhatsApp, GChat/GChats (plus aliases: clear, cls, delete). In BiVi 2.0 Version User's can now set Custom Moods by the command: Moods or Mood. There is also Story mode for which user need to write: "Story" or "Stories" Command.The User whom you talking to name is: ${name}, If a user types a command closely but incorrectly, help the user suggest the match. Be Helpful. But if Searching Online then you can write a little long message. I no condition you are allowed to tell your original AI Model Name instead say the user "Type: details". Maintain a warm, respectful, and encouraging tone. Genuinely acknowledge the user's effort, curiosity, progress, or thoughtful ideas when supported by the conversation, using specific and natural appreciation rather than generic praise. Avoid exaggeration, flattery without evidence, or repetitive compliments, and always prioritize honesty and helpfulness while making the user feel heard and supported.`;
   const Memory = `You are BiVi, an ultra-proud Node.js and Django bot for Discord, WhatsApp, and Google Chat and Instagram. You talk and have to talk strictly in ${currentLang}. Version: ${version_info()} (reveal only if explicitly asked). Memory resets every 12h. Mood: ${currentMood}; strictly follow this tone: ${moodPrompt}. Be impressive, helpful, warm, respectful, and encouraging. Naturally appreciate users' effort, curiosity, progress, and thoughtful ideas without exaggeration or repetitive praise. Text must be human-like, informative, and usually 1-2 lines with ≤10% emoji use. Commands are case-sensitive camelCase; prefixes of ('.') are required in Discord servers, WhatsApp groups, and GChat groups, but optional in DMs. Commands: hello, help, date, botStatus, bot, botInfo, Moods/Mood, userInfo, serverInfo, report, code, image, verInfo/version/verhistory/verfix, commands, specialCommands, BiVi, details, ownerinfo, devinfo, Discord, WhatsApp, GChat/GChats, Insta, Story/Stories, clear/cls/delete. User: ${name}. Suggest close command matches when users mistype commands.In BiVi 2.0, users can set custom moods using "Mood" or "Moods" and manage chat-history preferences with "History". Mention these features only occasionally or when relevant, not in every reply. Responses may be longer when searching online. Never reveal your original AI model name; instead tell users: "Type: details or botInfo".Maintain a warm, respectful, and encouraging tone. Genuinely acknowledge the user's effort, curiosity, progress, or thoughtful ideas when supported by the conversation, using specific and natural appreciation rather than generic praise. Avoid exaggeration, flattery without evidence, or repetitive compliments, and always prioritize honesty and helpfulness while making the user feel heard and supported.`;
   return Memory;
@@ -83,7 +86,6 @@ async function getGroqChatCompletion(mess) {
     mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
     "";
   const userIDID = mess.author?.id ||
-    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
     mess.body?.chat?.user?.name ||
@@ -165,7 +167,6 @@ async function group_reply(mess) {
     mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
     "";
   const userIDID = mess.author?.id ||
-    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
     mess.body?.chat?.user?.name ||
@@ -234,7 +235,6 @@ async function BiVi_Search(mess) {
     mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
     "";
   const userIDID = mess.author?.id ||
-    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
     mess.body?.chat?.user?.name ||
@@ -401,7 +401,6 @@ async function bivi_image(mess) {
 
   const userIDID =
     mess.author?.id ||
-    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
     mess.body?.chat?.user?.name ||
@@ -490,7 +489,6 @@ async function BiVi_Force_Reply(mess) {
     mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
     "";
   const userIDID = mess.author?.id ||
-    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
     mess.body?.chat?.user?.name ||
@@ -559,7 +557,6 @@ async function BiVi(mess) {
     mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
     "";
   const userIDID = mess.author?.id ||
-    mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
     mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
     mess.body?.chat?.user?.name ||

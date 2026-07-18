@@ -80,7 +80,7 @@ async function indi_image_send(mess) {
         const recipientId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
         try {
             const response = await fetch(
-                `https://graph.facebook.com/v25.0/me/messages?access_token=${process.env.uhh}`,
+                `https://graph.facebook.com/v25.0/me/messages?access_token=${process.env.facebook_main}`,
                 {
                     method: "POST",
                     headers: {
@@ -101,13 +101,18 @@ async function indi_image_send(mess) {
                     })
                 }
             );
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error(data);
+            }
         } catch (error) {
-            console.log("Failed to execute fetch to Meta API:", err);
+            console.log("Failed to execute fetch to Meta API:", error);
         }
     }
 
     if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
-        const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+        const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
         const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
 
         if (!recipientId) {
@@ -243,7 +248,7 @@ async function indi_reply(mess, value) {
                 {
                     method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${process.env.uhh}`,
+                        "Authorization": `Bearer ${process.env.instagram_main}`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
@@ -273,7 +278,7 @@ async function indi_reply(mess, value) {
 
 
     if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
-        const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+        const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
         // const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
         if (!recipientId) {
             console.log("Webhook received, but it's a status update (delivered/read), not an incoming message.");
@@ -366,23 +371,25 @@ async function reply(mess, value) {
 
     if (mess.body?.object === 'instagram') {
         const recipientId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
-
+// console.log(process.env.page_id)
+// console.log(process.env.instagram_main)
+// console.log("00000000000000000000000")
         const incomingMessageId = mess.body?.entry?.[0]?.messaging?.[0]?.message?.mid;
-        console.log(JSON.stringify({
-            recipient: {
-                id: recipientId
-            },
-            message: {
-                text: value
-            }
-        }, null, 2));
+        // console.log(JSON.stringify({
+        //     recipient: {
+        //         id: recipientId
+        //     },
+        //     message: {
+        //         text: value
+        //     }
+        // }, null, 2));
         try {
             const response = await fetch(
                 `https://graph.facebook.com/v25.0/${process.env.page_id}/messages`,
                 {
                     method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${process.env.uhh}`,
+                        "Authorization": `Bearer ${process.env.facebook_main}`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
@@ -413,7 +420,7 @@ async function reply(mess, value) {
 
     if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
 
-        const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+        const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
 
         const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
 
@@ -896,9 +903,8 @@ async function del(mess) {
 }
 
 const clear = async (mess, session, sessions) => {
-    const userIDID = mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
-
-        mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.user_id ||
+    const userIDID = mess.author?.id ||
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id ||
         mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from ||
         mess.body?.chat?.user?.name ||
         mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
@@ -948,12 +954,15 @@ const clear = async (mess, session, sessions) => {
 
 const bot = getEncoding("cl100k_base")
 let tokensThisMinute = 0;
-const TOKEN_Limit = 6000;
+const TOKEN_Limit = 10000;
 
 setInterval(() => tokensThisMinute = 0, 60000);
 
 function checker(mess) { //,value
-    const text = filt(mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || mess.content || mess.body?.chat?.messagePayload?.message?.text)
+    const text = filt(mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body ||
+        mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.interactive?.list_reply?.id || mess?.body?.entry?.[0]?.messaging?.[0]?.message?.text ||
+        mess.content || mess.body?.chat?.messagePayload?.message?.text || mess.body?.commonEventObject?.invokedFunction ||
+        "");
     function tokenfinder(mess) {
         // .join("\n")
         return bot.encode(text).length;

@@ -1,11 +1,14 @@
-*{
+@import url(theme.css);
+
+* {
     margin: 0;
-    padding:0;
+    padding: 0;
     font-family: var(--main-font);
+    scroll-behavior: smooth;
 }
 
 header {
-    width: 100vw;
+    width: 100%;
     height: 65px;
     background: transparent;
     backdrop-filter: blur(10px);
@@ -13,11 +16,13 @@ header {
     align-items: center;
     padding: 0 20px;
     position: fixed;
-    overflow: hidden;
+    /* overflow: hidden; */
     z-index: 1;
     /* margin:100px; */
 }
-
+body{
+    background:var(--body-bg);
+}
 
 .text-logo a {
     font-family: 'Courier', Courier, monospace;
@@ -52,4 +57,79 @@ nav ul li a {
     font-size: 21px;
     font-weight: bold;
     text-decoration: none;
+}
+
+.li1 {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn1 {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 21px;
+    font-weight: bold;
+    cursor: pointer;
+    /* padding: 0; */
+}
+
+.dropbtn1_content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 10px;
+
+    min-width: 200px;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.dropbtn1_content a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 12px 16px;
+    font-size: 15px;
+    text-align: center;
+}
+
+.dropbtn1_content a {
+    background: transparent;
+    backdrop-filter: blur(100px);
+    
+}
+
+/* .li1:hover .dropbtn1_content,
+.li1:active .dropbtn1_content {
+    display: block;
+} */
+
+.li1:hover .dropbtn1_content,
+.li1:focus-within .dropbtn1_content {
+    display: block;
+}
+
+.discord:hover {
+    background: var(--discord);
+    box-shadow:  0px 0px 50px rgba(88, 101, 242, 0.6);
+}
+
+.whats:hover {
+    background: var(--whatsapp);
+    box-shadow: 0px -5px 100px rgba(127, 242, 88, 0.6);
+}
+
+.google:hover {
+    background: var(--gchat);
+    box-shadow: 0px -5px 50px rgba(62, 184, 22, 0.6);
+}
+
+.Ins:hover {
+    background: var(--insta);
+    box-shadow: 0px 0px 50px rgba(152, 22, 184, 0.6);
 }

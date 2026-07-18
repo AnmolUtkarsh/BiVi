@@ -1,54 +1,6 @@
 require('dotenv').config()
 const { unfinished, command, hello, userInfo, serverInfo, botInfo, commands_arr } = require('./messages.js')
-
-
-let ph_number
-
-
-// function incom_mess(req, res) {
-//     const value = req.body.entry[0].changes[0].value;
-
-//     const mess = value.messages[0].text.body;
-
-//     const ph_number = value.contacts[0].wa_id;
-//     const uid = value.contacts[0].user_id;
-//     const uname = value.contacts[0].profile.name;
-//     const messageId = value.messages?.[0].id
-
-//     console.log(`
-// Message: ${mess}
-// Phone Number: ${ph_number}
-// UserName: ${uname}
-// UserId: ${uid}
-// messageId = ${messageId};`)
-// }
-
-
-
-
-
-// async function wa_reply(to, text) {
-//     await fetch(
-//         `https://graph.facebook.com/v25.0/${process.env.phone_number_id}/messages`,
-//         {
-//           method: "POST",
-//         headers: {
-//             "Authorization": `Bearer ${process.env.whatsapp_api_test}`,
-//             "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({
-//             messaging_product: "whatsapp",
-//             to: to,
-//             type: "text",
-//             text: {
-//                 body: text
-//           }
-//         })
-//     }
-// );
-// }
-
-
+const profileCache = new Map();
 
 
 
@@ -156,10 +108,14 @@ console.log(process.env.phone_number_id, process.env.whatsapp_api_test)
 async function instagramProfileFetch(mess) {
     try {
         // const userId = "17841416939972611";
-        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.message?.sender?.id;
+        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
+        const cached = getInstagramProfile(userId);
 
+        if (cached) {
+            return cached;
+        }
         const response = await fetch(
-            `https://graph.instagram.com/v25.0/${userId}?fields=id,name,username,profile_pic,is_verified_user,follower_count,is_user_follow_business,is_business_follow_user&access_token=${process.env.uhh}`
+            `https://graph.instagram.com/v25.0/${userId}?fields=id,name,username,profile_pic,is_verified_user,follower_count,is_user_follow_business,is_business_follow_user&access_token=${process.env.instagram_main}`
         );
 
         const data = await response.json();
@@ -168,22 +124,22 @@ async function instagramProfileFetch(mess) {
             console.error("Instagram Profile Fetch Error:", data);
             return null;
         }
-        //         console.log(`
-        // --- New Message Received ---
-        // Message: ${}
-        // Phone Number: ${ph_number}
-        // UserName: ${uname}
-        // UserId: ${uid}
-        // Message ID: ${messageId}
-        // ----------------------------`);
-        return {
+
+        const profile = {
             id: data.id,
             username: data.username,
             displayName: data.name,
-            is_verified: data.is_verified_user,
-            followers: data.follower_count,
-            raw: data
+            followers: data.follower_count
         };
+
+        // profileCache.set(userId, profile);
+        profileCache.set(userId, {
+            profile,
+            cachedAt: Date.now()
+        });
+
+        return profile;
+
 
     } catch (err) {
         console.error("Instagram Profile Fetch Failed:", err);
@@ -192,16 +148,28 @@ async function instagramProfileFetch(mess) {
 }
 
 
+function getInstagramProfile(userId) {
+    const cached = profileCache.get(userId);
 
+    if (!cached) return null;
+
+    // expire after 30 minutes
+    if (Date.now() - cached.cachedAt > 30 * 60 * 1000) {
+        profileCache.delete(userId);
+        return null;
+    }
+
+    return cached.profile;
+}
 
 async function instagramBiViProfileFetch(mess) {
     try {
         // Fix 1: Ensure the ID is a string to prevent JavaScript from rounding the last digit
         // const userId = "17841416939972611";
-        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.message?.sender?.id
+        const userId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
         const response = await fetch(
-            `https://graph.facebook.com/v25.0/${userId}?fields=id,name,username,followers_count,follows_count,ig_id,profile_picture_url,website&access_token=${process.env.uhh}`
+            `https://graph.facebook.com/v25.0/${userId}?fields=id,name,username,followers_count,follows_count,ig_id,profile_picture_url,website&access_token=${process.env.instagram_main}`
         );
 
         const data = await response.json();
@@ -232,7 +200,7 @@ async function instagramBiViProfileFetch(mess) {
 
 
 
-module.exports = { incom_mess, wa_reply, instagramProfileFetch, instagramBiViProfileFetch }
+module.exports = { incom_mess, wa_reply, instagramProfileFetch, instagramBiViProfileFetch, getInstagramProfile }
 
 
 

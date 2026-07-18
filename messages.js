@@ -1,5 +1,10 @@
 const os = require('os')
 const { version, fix, new_info, edition } = require('./config.js')
+const { getInstagramProfile, instagramBiViProfileFetch } = require("./cont.js");
+
+
+
+
 function version_info() {
    return version[(version.length) - 1];
 }
@@ -58,13 +63,13 @@ function hello(mess, name, name1) {
    // if (showReleaseIntro) {
 
 
-     
+
 
    //    // return a;
    // }
    // if (!showReleaseIntro) {
-      return intro + " 🦧,\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n> You can write these commands for getting started or can simply write whatever your mind is cooking. ✍🏻🔥\n* ❓ `Help`, `Commands`, `SpecialCommands`\n* 👤 `UserInfo`, `OwnerInfo`, `BotInfo`, `DevInfo`, `Details`\n* 📦 `VerInfo`, `VerFix`, `VerHistory`\n* 🖥️ `ServerInfo`, `ServerStatus`\n* 🗑️ `Clear`, `Delete` (Use `Delete` by replying to a message)\n* 🌐 `Discord`, `Chats`, `Insta`, `WhatsApp`, `Messenger`\n* 📖 `Story`, `Stories`\n* 📝 `Report`\nThere's many more! Just type `Commands` to get the full commands list!\n\nSpecial Commands: `Image: <prompt>`, `Force: <prompt>`, `Search: <prompt>`!\n🌐 *Website's Servers are Online!*\nVisit Now: *BiVi.Online*\n\n🐞 Report Bugs: `Report`.\n> *BiVi 2.0 Listening to '.' Prefixes in all groups, else Optional in DMs. OR write: `.Hello.` for global scope*.\n\nVersion: " + "`" + version_info() + "`";
-   }
+   return intro + " 🦧,\n🦉 I am *BiVi 2.0* and I can do things that you will Love 🦉🤌🏻.\n\n> You can write these commands for getting started or can simply write whatever your mind is cooking. ✍🏻🔥\n* ❓ `Help`, `Commands`, `SpecialCommands`\n* 👤 `UserInfo`, `OwnerInfo`, `BotInfo`, `DevInfo`, `Details`\n* 📦 `VerInfo`, `VerFix`, `VerHistory`\n* 🖥️ `ServerInfo`, `ServerStatus`\n* 🗑️ `Clear`, `Delete` (Use `Delete` by replying to a message)\n* 🌐 `Discord`, `Chats`, `Insta`, `WhatsApp`, `Messenger`\n* 📖 `Story`, `Stories`\n* 📝 `Report`\nThere's many more! Just type `Commands` to get the full commands list!\n\nSpecial Commands: `Image: <prompt>`, `Force: <prompt>`, `Search: <prompt>`!\n🌐 *Website's Servers are Online!*\nVisit Now: *BiVi.Online*\n\n🐞 Report Bugs: `Report`.\n> *BiVi 2.0 Listening to '.' Prefixes in all groups, else Optional in DMs. OR write: `.Hello.` for global scope*.\n\nVersion: " + "`" + version_info() + "`";
+}
 
 
 // }
@@ -269,27 +274,18 @@ ${user.displayAvatarURL({ extension: "png", size: 1024 })}`;
          `* Phone Number: \`${msg.from || "N.A"}\`
 * Wa ID: \`${contact.wa_id || "N.A"}\`
 * Display Name: \`${contact.profile?.name || "N.A"}\`
-
 * Phone Number ID: \`${metadata.phone_number_id || "N.A"}\`
 * Business Number: \`${metadata.display_phone_number || "N.A"}\`
-
-* Message ID: \`${msg.id || "N.A"}\`
 * Message Type: \`${msg.type || "N.A"}\`
-* Timestamp: \`${msg.timestamp || "N.A"}\`
-
-* Context Message ID: \`${context.id || "N.A"}\`
 * Forwarded: \`${context.forwarded ?? false}\`
 * Frequently Forwarded: \`${context.frequently_forwarded ?? false}\`
 
 * Group ID: \`${msg.group_id || context.group_id || "N.A"}\`
 * Group Name: \`${context.group_detail?.subject || "N.A"}\`
-
 * Messaging Product: \`${value.messaging_product}\`
-
 * Conversation ID: \`${conversation.id || "N.A"}\`
 * Conversation Origin: \`${conversation.origin?.type || "N.A"}\`
 * Expiration: \`${conversation.expiration_timestamp || "N.A"}\``;
-
       return info;
    }
 
@@ -299,12 +295,10 @@ ${user.displayAvatarURL({ extension: "png", size: 1024 })}`;
    // Google Chat
 
    if (message?.body?.chat) {
-
       const chat = message.body.chat;
       const msg = chat.messagePayload.message;
       const sender = msg.sender;
       const space = msg.space;
-
       info +=
          `* User ID: \`${sender.name || "N.A"}\`
 * Display Name: \`${sender.displayName || "N.A"}\`
@@ -383,16 +377,37 @@ function serverInfo() {
 
 function botInfo() {
    const memory = process.memoryUsage();
+   let instagramInfo = "";
+   const isInstagram = mess?.body?.object === "instagram";
+
+   if (isInstagram) {
+      const profile = await instagramBiViProfileFetch(mess);
+      instagramInfo =
+`
+=== INSTAGRAM BOT PROFILE ===
+
+* Official ID: \`${profile?.id || "N.A"}\`
+* Username: \`${profile?.username || "N.A"}\`
+* Display Name: \`${profile?.displayName || "N.A"}\`
+* Followers: \`${profile?.followers || "N.A"}\`
+* Following: \`${profile?.follows || "N.A"}\`
+* Profile Picture:
+${profile?.profilePicture || "N.A"}
+`;
+   }
+
+
+
    return "=== BOT INFO ===\n\n" +
       "* *Bot Name*: `" + "BiVi" + "`\n" +
       "* *Version*: `" + version_info() + "`\n" +
       "* *Last Version*: `" + last_version_info() + "`\n" +
       // "* *Latest Version Fix*: `" + fixed() + "`\n" +
-      "* *Bot Edition*: `" + "AIO [All In One] Edition" + "`\n" +
+      "* *Bot Edition*: `" + "LTS Edition" + "`\n" +
       "* *Development Phase*: `" + "20-06-2026 to 10-06-2026" + "`\n" +
       "* *Testing Phase*: `" + "10-06-2026 to Present" + "`\n" +
       "* *Updation Status*: `" + "In Progress" + "`\n" +
-      "* *Discontinued*: `" + "False" + "`\n\n" +
+      "* *Discontinued*: `" + "False" + "`\n\n" + instagramInfo + "\n\n"
       "=== TECHNICAL INFO ===\n\n" +
       "* *Process ID*: `" + process.pid + "`\n" +
       "* *Node.js Version*: `" + process.version + "`\n" +
@@ -657,12 +672,14 @@ function ownerinfo(message) {
 //    return "Hi There, BiVi Welcomes you!\nHere are the details for BiVi"
 // }
 
-
+function instagram(){
+   return "Hi there,\n> The Link for BiVi Official Instagram ChatBot is:\n\n*https://ig.me/m/bivi.online* \n> You can write: `WhatsApp`, `Discord`, `chats`/`gchat` for other platforms\n" + version_info
+}
 function discord() {
-   return "Hi there,\n> The Link for BiVi Official Discord ChatBot is:\n\n*https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot*" + version_info
+   return "Hi there,\n> The Link for BiVi Official Discord ChatBot is:\n\n*https://discord.com/oauth2/authorize?client_id=1506640389241573396&permissions=7973084880419895&integration_type=0&scope=bot*\n> You can write: `WhatsApp`, `Instagram`, `chats`/`gchat` for other platforms\n" + version_info
 }
 function whatsapp() {
-   return "Hi there,\n> The Link for BiVi Official WhatsApp ChatBot is:\n\n*https://wa.me/917294132087*" + version_info
+   return "Hi there,\n> The Link for BiVi Official WhatsApp ChatBot is:\n\n*https://wa.me/917294132087* \n> You can write: `WhatsApp`, `Discord`, `chats`/`gchat` for other platforms\n" + version_info
 }
 function chats() {
    return "Hi there,\n> The Link for Google Chats BiVi Official ChatBot is:\n\n*Link Coming Soon!*" + version_info
@@ -673,7 +690,7 @@ function tac() {
 
 }
 
-const command = { "hi": hello, "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'devinfo': devinfo, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verhistory": () => verhistory(), "versionhistory": () => verhistory(), "verhis": () => verhistory(), "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands, "specialcommand": specialcommands, "mem": mem, "bivi": botInfo, 'ownerinfo': ownerinfo, 'verfix': () => verfix(), 'versionfix': () => verfix(), "serverstatus": serverInfo, "chats": chats , "terms & conditions" : tac, "discord": discord, "whatsapp":whatsapp, "chats":chats, "gchats":chats}
+const command = { "hi": hello, "hello": hello, "help": help, 'date': date, 'botstatus': botInfo, 'bot': botInfo, 'botinfo': botInfo, 'mood': unfinished, 'points': unfinished, 'userinfo': userInfo, 'serverinfo': serverInfo, 'connectacc': unfinished, 'disconnectacc': unfinished, 'devinfo': devinfo, 'report': unfinished, 'music': unfinished, 'code': unfinished, 'image': unfinished, 'imgsol': unfinished, 'skill-showoff': unfinished, "verhistory": () => verhistory(), "versionhistory": () => verhistory(), "verhis": () => verhistory(), "verinfo": () => version_info(), "version": () => version_info(), "versioninfo": () => version_info(), "commands": () => commands(), "details": botInfo, "developer": unfinished, "specialcommands": specialcommands, "specialcommand": specialcommands, "mem": mem, "bivi": botInfo, 'ownerinfo': ownerinfo, 'verfix': () => verfix(), 'versionfix': () => verfix(), "serverstatus": serverInfo, "chats": chats, "terms & conditions": tac, "discord": discord, "whatsapp": whatsapp, "chats": chats, "gchats": chats }
 
 const commands_arr = ["delete this", "delete", "clear", "cls", "clear", "story", "stories", "devinfo"]
 
