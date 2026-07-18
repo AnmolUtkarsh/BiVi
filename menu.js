@@ -1,5 +1,8 @@
-const { version_info } = require("./messages");
-
+// const { version_info } = require("./messages");
+const { version } = require('./config.js')
+function version_info() {
+    return version[(version.length) - 1];
+}
 // async function buildInteractiveMessage(platform, options) {
 
 // }
@@ -366,7 +369,7 @@ const WhatsAppmenu = {
             ]
         },
 
-        
+
 
         {
             title: "🐞 Support",
@@ -376,7 +379,7 @@ const WhatsAppmenu = {
                     title: "Report:<prompt>",
                     description: "Report an issue"
                 },
-                
+
             ]
         }
     ]
@@ -589,7 +592,7 @@ const googleChatMenu = {
             ]
         },
         {
-            title: "✨ Special Commands", 
+            title: "✨ Special Commands",
             rows: [
                 { id: ".image: generate image of an elephant", title: ".Image:<prompt>", description: "Generate AI images from a prompt." },
                 { id: ".search: Latest News in India", title: ".Search:<prompt>", description: "Search the web using AI." },
@@ -650,4 +653,4 @@ const googleChatMenu = {
 
 
 
-module.exports = {WhatsAppmenu, googleChatMenu}
+module.exports = { WhatsAppmenu, googleChatMenu }
