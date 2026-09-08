@@ -44,8 +44,7 @@ async function customError(error, req, res, next) {
         createdAt,
         ExpiryAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
         status: "error",
-        code: code,
-        status: error.status || statuses.message[code],
+        code: `${code}: ${error.status || statuses.message[code]}`,
         message: error.message || "Internal Server Error"
     }
 
@@ -126,11 +125,12 @@ async function customError(error, req, res, next) {
 
 async function customError1(error, req, res, next) {
     // const error = new apiError(code, message);
+    const testid = req.params.testId
     const code = error.code || 500;
+    const errorId = crypto.randomUUID();
     const errorData = {
         errorId,
         testId: testid,
-        status: "error",
         code: code,
         status: error.status || statuses.message[code],
         message: error.message || "Internal Server Error"
@@ -151,6 +151,48 @@ async function customError1(error, req, res, next) {
                     space:
                     {
                         name: "BiVi Typing Test Find API",
+                        version: process.env.bivi_ttfa_version
+                    },
+                    test: errorData
+                }
+            ]
+        )
+}
+
+
+
+
+
+
+
+async function customError2(error, req, res, next) {
+    // const error = new apiError(code, message);
+    const testid = req.body.testId
+    const code = error.code || 500;
+    const errorId = crypto.randomUUID();
+    const errorData = {
+        errorId,
+        testId: testid,
+        code: code,
+        status: error.status || statuses.message[code],
+        message: error.message || "Internal Server Error"
+    }
+
+    return res
+        .status(code)
+        .json(
+            [
+                {
+                    status: {
+                        success: false,
+                        wrote: false,
+                        code: code,
+                    }
+                },
+                {
+                    space:
+                    {
+                        name: "BiVi Typing Test Write-Result API",
                         version: process.env.bivi_ttfa_version
                     },
                     test: errorData
@@ -200,4 +242,4 @@ async function customError1(error, req, res, next) {
 //     }
 // }
 
-module.exports = { apiError, customError , customError1}
+module.exports = { apiError, customError , customError1, customError2}

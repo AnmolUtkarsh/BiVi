@@ -899,6 +899,55 @@ function compareSequence(expected, entered) {
     //     });
     // }
 
+for (
+    let index = 0;
+    index < wordAlignment.operations.length;
+    index++
+) {
+
+    const item =
+        wordAlignment.operations[index];
+
+
+    if (item.type === "equal") {
+
+        wordsStats.correct++;
+
+    }
+
+    else if (item.type === "substitute") {
+
+        wordsStats.incorrect++;
+
+    }
+
+    else if (item.type === "insert") {
+
+        wordsStats.extra++;
+
+    }
+
+    else if (item.type === "delete") {
+
+        wordsStats.missed++;
+    }
+
+
+    wordsStats.results.push({
+
+        index,
+
+        expected:
+            item.expected,
+
+        entered:
+            item.entered,
+
+        status:
+            item.type
+    });
+}
+
 
     /*
     -------------------------------------------------------
@@ -979,13 +1028,24 @@ function compareSequence(expected, entered) {
         -----------------------------------------------
         */
 
-        if (charactersStats.firstError === null) {
-            charactersStats.firstError = {
-                expectedPosition,
-                enteredPosition
-            };
-        }
+        // if (charactersStats.firstError === null) {
+        //     charactersStats.firstError = {
+        //         expectedPosition,
+        //         enteredPosition
+        //     };
+        // }
 
+
+        if (charactersStats.firstError === null) {
+
+    charactersStats.firstError = {
+        type: operation.type,
+        expText: operation.expected ?? null,
+        entText: operation.entered ?? null,
+        exp: expectedPosition,
+        ent: enteredPosition,
+    };
+}
 
         currentIncorrectStreak++;
         currentCorrectStreak = 0;
@@ -1008,13 +1068,11 @@ function compareSequence(expected, entered) {
             charactersStats.incorrect++;
 
             charactersStats.errors.push({
-                expectedPosition,
-                enteredPosition,
-
                 type: "substitution",
-
-                expected: operation.expected,
-                entered: operation.entered
+                expText: operation.expected,
+                entText: operation.entered,
+                exp: expectedPosition,
+                ent: enteredPosition,
             });
 
             expectedPosition++;
@@ -1029,7 +1087,7 @@ function compareSequence(expected, entered) {
             EXTRA CHARACTER
         -----------------------------------------------
         */
-
+    
         if (operation.type === "insert") {
 
             charactersStats.extra++;
@@ -1253,7 +1311,7 @@ function calculateTypingResult({
 
     const netWPM =
         Math.max(
-            0,
+            rawWPM,
 
             rawWPM -
             (
@@ -1500,11 +1558,19 @@ function calculateTypingResult({
 // );
 
 
+// console.dir(
+//     calculateTypingResult({
+//         expected: "The quick brown fox jumps over the silent valley while machines calculate every uncertain movement. Precision matters when tiny mistakes accumulate across long sequences, because one misplaced character can shift every comparison that follows. Reliable software should survive chaotic input, unexpected repetition, missing fragments, accidental insertions, reversed sections, and sudden corrections without producing impossible statistics. Testing an algorithm with clean examples is useful, but deliberately hostile input reveals weaknesses that ordinary cases will never expose.",
+//         entered: "The quick borwn fox jumps over the silent valley while machinse calculate every uncertain movemnt. Precision matters when tiny mistakes accumulate across long sequences, because one misplaced character can shift every comparsion that follows. Reliable software should survive chaotci input, unexpected repetition, missing fragments, accidental insertions, reversed sections, and sudden corrections without producing impossible statisitcs. Testing an algorithm with clean examples is useful, but deliberately hostile input reveals weakneses that ordinary cases will never expose.",
+//         durationSeconds: 73.847
+//     }),
+//     { depth: null }
+// );
 console.dir(
     calculateTypingResult({
-        expected: "Hello world",
-        entered: "Helo world",
-        durationSeconds: 1.8
+        expected: "The copper bridge looked unusually silent at dawn, although the river beneath it surged with relentless speed. A narrow trail curved away from the station, crossed brittle grass, and disappeared behind a weathered wall. Near the wall, three machines hummed beside a deserted shed while distant bells interrupted the otherwise steady morning. Nobody explained why the ancient clock stopped whenever clouds covered the eastern hill, but everyone remembered the pattern. Later, a sudden gust scattered",
+        entered: "behind a weathered wall. Near the wall, three machiens hummed beside a deserted shed while The copper bridge looked unusually silent at dawn, although river beneath surged with clouds covered the eastern hill, but everyone remembred the pattern. Later, a sudden gust scattered disntat bells interrupted the otherwise stead morning. Nobody explained why the anicent clock stopped whenever relentless speed. A narrow trail curved away from the station, crossed britle grass, and disappeared",
+        durationSeconds: 73.847
     }),
     { depth: null }
 );

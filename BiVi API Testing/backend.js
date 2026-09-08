@@ -43,14 +43,14 @@ async function generateWords(lang, count) {
 // })()
 
 
-async function generateTest(client, lang, count) {
+async function generateTest(db, lang, count) {
     const createdAt = Date.now()
     if (Number(count) < 10) {
         throw new apiError(400, "The entered word list count is less than the Minimum limit")
     }
 
     try {
-        const db = client.db("BiVi_Typing_Test");
+        // const db = client.db("BiVi_Typing_Test");
         // db.collection("tests");
 
         const [counter, word_list] = await Promise.all([
@@ -61,19 +61,16 @@ async function generateTest(client, lang, count) {
             ),
             generateWords(lang, count)
         ])
-        if (Date.now() - createdAt > 20000) 
-            {
+        if (Date.now() - createdAt > 20000) {
             throw new apiError(408, "Request timed out [Database Error]");
         }
 
         const testid = `BV-${String(counter.sequence).padStart(6, "0")}ii`;
 
-        if (Date.now() - createdAt > 30000) 
-            {
+        if (Date.now() - createdAt > 30000) {
             throw new apiError(408, "Request timed out [Database Error]");
         }
-        try 
-        {
+        try {
             await db.collection("tests")
                 .insertOne
                 (
@@ -89,8 +86,7 @@ async function generateTest(client, lang, count) {
                     }
                 )
         }
-        catch (er) 
-        {
+        catch (er) {
             throw new apiError(500, "Database Crashed")
         }
 
@@ -246,7 +242,7 @@ function parseCount(input, defaultCount = 50) {
         2.5k = 2500 is valid.
         2.55k = 2550 is also valid.
     */
-    const MAX_COUNT = process.env.max_char;
+    const MAX_COUNT = Number(process.env.max_char);
     if (!Number.isSafeInteger(count) || count > MAX_COUNT) {
         return null;
     }
@@ -288,7 +284,7 @@ async function searchTest(testid, db) {
         // return res.status(200).json(result)
     } catch (err) {
         // console.error("Error:", err.message);
-        throw new apiError(err.code, err.message);
+        throw new apiError(err.code || 500, err.message || "Internal Server Error");
     }
 
 
@@ -308,4 +304,56 @@ async function searchTest(testid, db) {
 
 
 
-module.exports = { generateWords, generateTest, parseLanguageIdentifier, parseCount, searchTest }
+async function updateTest(testid, db, value) {
+
+    let testId
+    if (testid.includes("-")) {
+        testId = +testid.slice(3, -2);
+    }
+    else {
+        testId = +testid.slice(2, -2);
+    }
+
+    try {
+        const result = await db.collection("tests").updateOne({ testId }, {
+            $set: {
+                status: "completed",
+                result: {
+                    nWPM: value.nWPM ?? null,
+                    rWPM: value.rWPM ?? null,
+                    accuracy: value.accuracy ?? null,
+                    consistency: value.consistency ?? null,
+                    timeTaken: value.timeTaken ?? null,
+                    totalChars: value.totalChars ?? null,
+                    totalErrors: value.totalErrors ?? null
+                }
+            }
+        });
+
+        if (result.matchedCount === 0) {
+            throw new apiError(404, "Test not found");
+        }
+
+        return;
+        // return res.status(200).json(result)
+    } catch (err) {
+        // console.error("Error:", err.message);
+        throw new apiError(err.code || 500, err.message || "unable to update database");
+    }
+
+
+
+    // try {
+    //     const db = client.db("BiVi_Typing_Test");
+    //     const a = await db.collection("tests").findOne()
+    //     return a;
+    // } catch (error) {
+    //     throw new apiError(500, "Database Crashed")
+    // }
+    // try{
+    // This is Incomplete
+    // }
+}
+
+
+module.exports = { generateWords, generateTest, parseLanguageIdentifier, parseCount, searchTest, updateTest }

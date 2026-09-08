@@ -33,7 +33,10 @@ function apiFindResponse(testId, input) {
                     nWPM: hmm.nWPM,
                     rWPM: hmm.rWPM,
                     accuracy: hmm.accuracy,
-                    consistency: hmm.consistency ?? "UnRecorded"
+                    consistency: hmm.consistency ?? "UnRecorded",
+                    timeTaken: hmm.timeTaken,
+                    totalChars: hmm.totalChars,
+                    totalErrors: hmm.totalErrors
                 } : null
             }
         }
@@ -46,8 +49,46 @@ function apiFindResponse(testId, input) {
 
 
 
+// function apiFindResponseFailed(testId, input = null) {
+//     // const hmm = input.result
+//     return [
+//         {
+//             status: {
+//                 success: true,
+//                 found: false,
+//                 code: 404,
+//             }
+//         },
+//         {
+//             space:
+//             {
+//                 name: "BiVi Typing Test Find API",
+//                 version: process.env.bivi_ttfa_version
+//             },
+//             test:
+//             {
+//                 id: testId,
+//                 status: input.status || null,
+//                 createdAt: input.createdAt || null,
+//                 type: "words" || null,
+//                 language: language || null,
+//                 count: count || null,
+//                 result: hmm ? {
+//                     nWPM: hmm.nWPM,
+//                     rWPM: hmm.rWPM,
+//                     accuracy: hmm.accuracy,
+//                     consistency: hmm.consistency ?? "UnRecorded"
+//                 } : null
+//             }
+//         }
+//     ]
+// }
+
+
+
 function apiFindResponseFailed(testId, input = null) {
     // const hmm = input.result
+const hmm = input?.result ?? null;
     return [
         {
             status: {
@@ -65,15 +106,15 @@ function apiFindResponseFailed(testId, input = null) {
             test:
             {
                 id: testId,
-                status: input.status || null,
-                createdAt: input.createdAt || null,
-                type: "words" || null,
-                language: language || null,
-                count: count || null,
+                status: input?.status ?? null,
+                createdAt: input?.createdAt ?? null,
+                type: "words",
+                language: input?.lang ?? null,
+                count: input?.count ?? null,
                 result: hmm ? {
-                    nWPM: hmm.nWPM,
-                    rWPM: hmm.rWPM,
-                    accuracy: hmm.accuracy,
+                    nWPM: hmm.nWPM ?? null,
+                    rWPM: hmm.rWPM ?? null,
+                    accuracy: hmm.accuracy ?? null,
                     consistency: hmm.consistency ?? "UnRecorded"
                 } : null
             }

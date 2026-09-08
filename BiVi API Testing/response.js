@@ -57,4 +57,27 @@ function apiResponse(testId, language, count, words) {
 //     ]
 // }
 
-module.exports = { apiResponse }
+
+function apiWriteResponse(testId, result) {
+    
+    return {
+        status: {
+            success: true,
+            code: 200,
+        },
+
+        space: {
+            name: "BiVi Typing Test Write-Result API",
+            version: process.env.bivi_tta_version
+        },
+
+        test: {
+            id: testId,
+            ...result
+        }
+    };
+}
+
+
+
+module.exports = { apiResponse, apiWriteResponse }
