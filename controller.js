@@ -46,7 +46,6 @@ async function indi_image_send(mess) {
         !!mess.body?.commonEventObject;
 
     if (isGoogleChat) {
-        // Later you can replace this with cards/widgets
         return {
             hostAppDataAction: {
                 chatDataAction: {
@@ -178,8 +177,6 @@ async function indi_image_send(mess) {
 
 
 async function indi_reply(mess, value) {
-    // const valueObj = mess.body?.entry?.[0]?.changes?.[0]?.value || mess.body?.commonEventObject?.hostApp;
-    // const valueObj = mess.body?.entry?.[0]?.changes?.[0]?.value || (isGoogleChat ? "CHAT" : null);
     const isGoogleChat =
         !!mess.body?.chat ||
         !!mess.body?.space ||
@@ -200,48 +197,11 @@ async function indi_reply(mess, value) {
     }
 
 
-    // if (valueObj === "CHAT") {
-    //     const threadName = mess.body?.chat?.messagePayload?.message?.thread?.name || mess.body?.message?.thread?.name;
-
-    //     // Create the clean root-level object the latest Google Chat API expects
-    //     const responsePayload = {
-    //         text: value
-    //     };
-
-    //     // Safely apply the thread context only if it exists
-    //     if (threadName) {
-    //         responsePayload.thread = { name: threadName };
-    //     }
-
-    //     return responsePayload;
-    // }
-
-
-
-
-    // if (valueObj === "CHAT") {
-    //     return {
-    //         text: value
-    //     };
-    // }
-
-    // if (valueObj === "CHAT") {
-    //     return {
-    //         text: value,
-    //         thread: {
-    //             name: mess.body?.chat?.messagePayload?.message?.thread?.name || mess.body?.message?.thread?.name
-    //         }
-    //     };
-    // }
-
-
-
 
 
     if (mess.body?.object === 'instagram') {
         const recipientId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
 
-        // const incomingMessageId = mess.entry?.[0]?.messaging?.[0]?.mid;
         try {
             const response = await fetch(
                 `https://graph.instagram.com/v25.0/${process.env.instagram_ig_id}/messages`,
@@ -279,7 +239,6 @@ async function indi_reply(mess, value) {
 
     if (mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp") {
         const recipientId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from || mess.body?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
-        // const incomingMessageId = mess.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.id;
         if (!recipientId) {
             console.log("Webhook received, but it's a status update (delivered/read), not an incoming message.");
             return;
@@ -324,8 +283,7 @@ async function indi_reply(mess, value) {
 }
 
 async function reply(mess, value) {
-    // const valueObj = mess.body?.entry?.[0]?.changes?.[0]?.value || mess.body?.commonEventObject?.hostApp;
-    // const valueObj = mess.body?.entry?.[0]?.changes?.[0]?.value || (isGoogleChat ? "CHAT" : null);
+
     const isGoogleChat =
         !!mess.body?.chat ||
         !!mess.body?.space ||
@@ -351,38 +309,14 @@ async function reply(mess, value) {
         }
     }
 
-    // if (valueObj === "CHAT") {
-    //     return {
-    //         text: value,
-    //         thread: {
-    //             name: mess.body?.chat?.messagePayload?.message?.thread?.name || mess.body?.message?.thread?.name
-    //         }
-    //     };
-    // }
-
-    // if (valueObj === "CHAT") {
-    //     return {
-    //         text: value
-    //     };
-
-
-    // }
+    
 
 
     if (mess.body?.object === 'instagram') {
         const recipientId = mess.body?.entry?.[0]?.messaging?.[0]?.sender?.id;
-// console.log(process.env.page_id)
-// console.log(process.env.instagram_main)
-// console.log("00000000000000000000000")
+
         const incomingMessageId = mess.body?.entry?.[0]?.messaging?.[0]?.message?.mid;
-        // console.log(JSON.stringify({
-        //     recipient: {
-        //         id: recipientId
-        //     },
-        //     message: {
-        //         text: value
-        //     }
-        // }, null, 2));
+
         try {
             const response = await fetch(
                 `https://graph.facebook.com/v25.0/${process.env.page_id}/messages`,
@@ -461,11 +395,7 @@ async function reply(mess, value) {
             console.error("Failed to execute fetch to Meta API:", err);
         }
     }
-    // else{
-    //     try {
-    //         return await mess.reply(value)
-    //     } catch (error) { console.log("Error in Sending Message from WhatsApp under Reply section!") }
-    // }
+
 
     if (!isGoogleChat && mess.reply) {
         return await mess.reply(value);
@@ -473,10 +403,6 @@ async function reply(mess, value) {
 }
 
 
-// async function imp(mess, inter) {
-//     const filter = m => m.author.id === mess.author.id;
-//     const timeCollected = await mess.channel.awaitMessages({ filter, max: 1, time: inter, errors: ['time'] });
-// }
 async function WhatsAppHelloCard(mess, name, name1) {
 
     const recipientId =
@@ -547,145 +473,6 @@ async function WhatsAppHelloCard(mess, name, name1) {
         console.log(err);
     }
 }
-
-
-// async function GoogleChatHelloCard(mess, name, name1) {
-// const intro = mess.body?.entry?.[0]?.changes?.[0]?.value?.messaging_product === "whatsapp"
-//       ? `🙂‍↔️ Hi there ${name}`
-//       : `🙂‍↔️ Hi there ${name} aka ${name1}`;
-//     return {
-
-//         hostAppDataAction: {
-
-//             chatDataAction: {
-
-//                 createMessageAction: {
-
-//                     message: {
-
-//                         cardsV2: [
-
-//                             {
-
-//                                 cardId: "bivi_menu",
-
-//                                 card: {
-
-//                                     header: {
-
-//                                         title: googleChatMenu.title + "\n",
-
-//                                         subtitle: intro + "\n" +googleChatMenu.subtitle
-
-//                                     },
-
-//                                     sections: [
-
-//                                         // Body Section
-//                                         {
-
-//                                             widgets: [
-
-//                                                 {
-
-//                                                     textParagraph: {
-
-//                                                         text: googleChatMenu.body
-
-//                                                     }
-
-//                                                 }
-
-//                                             ]
-
-//                                         },
-
-//                                         // Command Sections
-//                                         ...googleChatMenu.sections.map(section => ({
-
-//                                             header: section.title,
-
-//                                             widgets: section.rows.map(row => ({
-
-//                                                 buttonList: {
-
-//                                                     buttons: [
-
-//                                                         {
-
-//                                                             text: row.title,
-
-//                                                             onClick: {
-
-//                                                                 action: {
-
-//                                                                     actionMethodName: row.id,
-
-//                                                                     parameters: [
-
-//                                                                         {
-
-//                                                                             key: "command",
-
-//                                                                             value: row.id
-
-//                                                                         }
-
-//                                                                     ]
-
-//                                                                 }
-
-//                                                             }
-
-//                                                         }
-
-//                                                     ]
-
-//                                                 }
-
-//                                             }))
-
-//                                         })),
-
-//                                         // Footer
-//                                         {
-
-//                                             widgets: [
-
-//                                                 {
-
-//                                                     textParagraph: {
-
-//                                                         text: `<i>${googleChatMenu.footer}</i>`
-
-//                                                     }
-
-//                                                 }
-
-//                                             ]
-
-//                                         }
-
-//                                     ]
-
-//                                 }
-
-//                             }
-
-//                         ]
-
-//                     }
-
-//                 }
-
-//             }
-
-//         }
-
-//     };
-
-// }
-
 
 
 
@@ -819,17 +606,6 @@ async function buildInteractiveMessage(mess, menu) {
     return discordMenu(menu);
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
