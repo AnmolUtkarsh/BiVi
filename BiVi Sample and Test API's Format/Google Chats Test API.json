@@ -1,0 +1,77 @@
+{
+  "commonEventObject": {
+    "userLocale": "en-GB",
+    "hostApp": "CHAT",
+    "platform": "WEB",
+    "timeZone": {
+      "id": "Asia/Kolkata",
+      "offset": 19800000
+    }
+  },
+  "authorizationEventObject": {
+    "systemIdToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjMwMzViYjg2ZDk5ZjIyZTYxMzQ2N2E2NjgwODI1ZWViMGQ4MTM5YTIiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJodHRwczovL2ZpbmlzaGVyLXBsYWNpZGx5LXByb3VkLm5ncm9rLWZyZWUuZGV2L3dlYmhvb2siLCJhenAiOiIxMDU2OTI5OTc3OTY3MDM4Njk3NzIiLCJlbWFpbCI6InNlcnZpY2UtNzU4NDI2NzAxNDM2QGdjcC1zYS1nc3VpdGVhZGRvbnMuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZXhwIjoxNzgxNzUxMzQ3LCJpYXQiOjE3ODE3NDc3NDcsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsInN1YiI6IjEwNTY5Mjk5Nzc5NjcwMzg2OTc3MiJ9.lbl4bMhFCtVL4lomLVKignLDdw1ZnNxfRxYiMaM3b5GZwlUcoWONJ4ig-bfzjPcHpwK4NUzwfJEg38ax1uEOyccltSi_xRG5q921dSHxf_Eu5HbD5t_zyvyct0SmQx3wFXYyo2zGvWJTLpgIl_iLgv31awPY50XfLTWj0yV16Jhrb0JX9gXL-dwljY2XdhZy-sfT4hqZDqvx5cD_Sbl1i9ZRRzMuxE3iXsFj8LsUShodumOvzJODRTbxTxf2CYQ46eD5twLUB0IUlkW8dI43Schmsb4gsU94PiIYwRek8QIojGZ8qqvQ_gHWhwf01pzKLSla84oLS6wlKJLGkX1BYg"
+  },
+  "chat": {
+    "user": {
+      "name": "users/111058052815667987694",
+      "displayName": "Vendrify Testings",
+      "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocK_NOUxEAVhyaOkM0HXPUhhZ-YJZyUl-5fyswLzZ7WxG472=k-no",
+      "email": "vendrify.testing@gmail.com",
+      "type": "HUMAN"
+    },
+    "eventTime": "2026-06-18T01:55:47.122687Z",
+    "messagePayload": {
+      "space": {
+        "name": "spaces/lym6fyAAAAE",
+        "type": "DM",
+        "singleUserBotDm": true,
+        "spaceThreadingState": "THREADED_MESSAGES",
+        "spaceType": "DIRECT_MESSAGE",
+        "spaceHistoryState": "HISTORY_ON",
+        "lastActiveTime": "2026-06-18T01:55:47.122687Z",
+        "membershipCount": {
+          "joinedDirectHumanUserCount": 1
+        },
+        "spaceUri": "https://chat.google.com/dm/lym6fyAAAAE?cls=11"
+      },
+      "message": {
+        "name": "spaces/lym6fyAAAAE/messages/I1hX32u0Q7o.I1hX32u0Q7o",
+        "sender": {
+          "name": "users/111058052815667987694",
+          "displayName": "Vendrify Testings",
+          "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocK_NOUxEAVhyaOkM0HXPUhhZ-YJZyUl-5fyswLzZ7WxG472=k-no",
+          "email": "vendrify.testing@gmail.com",
+          "type": "HUMAN"
+        },
+        "createTime": "2026-06-18T01:55:47.122687Z",
+        "text": "Hello",
+        "thread": {
+          "name": "spaces/lym6fyAAAAE/threads/I1hX32u0Q7o",
+          "retentionSettings": {
+            "state": "PERMANENT"
+          }
+        },
+        "space": {
+          "name": "spaces/lym6fyAAAAE",
+          "type": "DM",
+          "singleUserBotDm": true,
+          "spaceThreadingState": "THREADED_MESSAGES",
+          "spaceType": "DIRECT_MESSAGE",
+          "spaceHistoryState": "HISTORY_ON",
+          "lastActiveTime": "2026-06-18T01:55:47.122687Z",
+          "membershipCount": {
+            "joinedDirectHumanUserCount": 1
+          },
+          "spaceUri": "https://chat.google.com/dm/lym6fyAAAAE?cls=11"
+        },
+        "argumentText": "Hello",
+        "retentionSettings": {
+          "state": "PERMANENT"
+        },
+        "messageHistoryState": "HISTORY_ON",
+        "formattedText": "Hello"
+      },
+      "configCompleteRedirectUri": "https://chat.google.com/api/bot_config_complete?token=AJ4f_WWBJOhk1FAe_vTSuQQdrPEALXj5BCzsiDHO69b4J6lv3rkuuVFX_Q3hLc-cI44FsY7F6Ks15FNShWO1-RXbmVTGo2rcGSnEnsnT47fHYcqwmlxTmEW2F8B9ufqnBCtp9GigkLqYMoBgGWKF6UZFCQ%3D%3D"
+    }
+  }
+}
