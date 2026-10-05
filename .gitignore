@@ -1,3 +1,5 @@
 node_modules/
 .env
 BiVi ChatBot/client_secret_*.json
+BiVi API Testing/tests/
+BiVi ChatBot/tests/
