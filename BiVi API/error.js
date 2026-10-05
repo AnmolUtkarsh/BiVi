@@ -5,6 +5,29 @@ require("dotenv").config({
     path: path.resolve(__dirname, "../.env")
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class apiError extends Error {
     constructor(statusCode, message) {
         super(message);
@@ -13,6 +36,27 @@ class apiError extends Error {
         this.message = message;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function customError(error, req, res, next) {
     // const error = new apiError(code, message);
@@ -48,19 +92,6 @@ async function customError(error, req, res, next) {
         message: error.message || "Internal Server Error"
     }
 
-    // req.db
-    //     .collection("BiVi_API_Errors_Logs")
-    //     .insertOne(errorData)
-    //     .catch((dbError) => {
-    //         console.error("Failed to save error:", dbError);
-    //     });
-
-    // req.db.collection("tests")
-    //     .insertOne(errorData1)
-    //     .catch((dbError1) => {
-    //         console.error("Failed to save error in TESTs:", dbError1);
-    //     });
-
 
     Promise.allSettled([
         req.db.collection("BiVi_API_Errors_Logs").insertOne(errorData),
@@ -95,25 +126,6 @@ async function customError(error, req, res, next) {
             ]
         )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -200,46 +212,5 @@ async function customError2(error, req, res, next) {
             ]
         )
 }
-
-// function error_negative_input() {
-//     return {
-//         "success": false,
-//         "error": {
-//             "code": 411,
-//             "status": statuses.message['411'],
-//             "message": "Amount must be a positive integer"
-//         }
-//     }
-// }
-// function error_invalid_input() {
-//     return {
-//         "success": false,
-//         "error": {
-//             "code": 400,
-//             "status": statuses.message['400'],
-//             "message": "Enter valid input"
-//         }
-//     }
-// }
-// function error_rate_limit() {
-//     return {
-//         "success": false,
-//         "error": {
-//             "code": "429",
-//             "status": statuses.message['429'],
-//             "message": "Rate limit crossed"
-//         }
-//     }
-// }
-// function error_database_crashed() {
-//     return {
-//         "success": false,
-//         "error": {
-//             "code": 500,
-//             "status": statuses.message['500'],
-//             "message": "Database crashed"
-//         }
-//     }
-// }
 
 module.exports = { apiError, customError , customError1, customError2}

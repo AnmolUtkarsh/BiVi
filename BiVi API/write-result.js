@@ -37,7 +37,7 @@
 
 // writeResult.js
 
-const { calculateTypingResult } = require("../ScoreEngine/main");
+const { calculateTypingResult } = require("../Advanced Typing Score Engine/main");
 const { apiError } = require("./error");
 // const { formatWriteResultError } = require("./writeResultError");
 

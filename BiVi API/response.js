@@ -3,8 +3,7 @@ require("dotenv").config({
     path: path.resolve(__dirname, "../.env")
 });
 function apiResponse(testId, language, count, words) {
-    return [
-        {
+    return {
             status: {
                 success: true,
                 code: 200,
@@ -26,36 +25,8 @@ function apiResponse(testId, language, count, words) {
                 words: words
             }
         }
-    ]
 }
-// console.log(response("english", "20"))
 
-
-
-// function response(language, words) {
-//     return [
-//         {
-//             platform: [
-//                 {
-//                     name: "BiVi Typing Test",
-//                     version: "v1"
-//                 }
-//             ],
-//             test: [
-//                 {
-//                     testno: 928343,
-//                     type: "Words",
-//                     language: "language",
-//                     words: "15"
-//                 },
-//                 {
-//                     list: words
-//                 }
-//             ]
-
-//         }
-//     ]
-// }
 
 
 function apiWriteResponse(testId, result) {
@@ -75,7 +46,7 @@ function apiWriteResponse(testId, result) {
             id: testId,
             ...result
         }
-    };
+    }
 }
 
 

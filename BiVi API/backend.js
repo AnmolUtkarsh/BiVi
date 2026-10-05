@@ -340,19 +340,6 @@ async function updateTest(testid, db, value) {
         // console.error("Error:", err.message);
         throw new apiError(err.code || 500, err.message || "unable to update database");
     }
-
-
-
-    // try {
-    //     const db = client.db("BiVi_Typing_Test");
-    //     const a = await db.collection("tests").findOne()
-    //     return a;
-    // } catch (error) {
-    //     throw new apiError(500, "Database Crashed")
-    // }
-    // try{
-    // This is Incomplete
-    // }
 }
 
 

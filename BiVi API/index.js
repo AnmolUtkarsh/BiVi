@@ -97,7 +97,7 @@ app.use(express.json());
                 return res.status(404).json(apiFindResponseFailed(testid))
             }
 
-            if (output_new.status === "error") {
+            if (output_new.status === "error") { //null two
                 return res.status(404).json(apiFindResponseFailed(testid, output_new))
             }
 

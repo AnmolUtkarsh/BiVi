@@ -1,12 +1,13 @@
+const { randomUUID } = require("crypto");
 const path = require("path");
 require("dotenv").config({
     path: path.resolve(__dirname, "../.env")
 });
-
+// require('crypto');
 //Status: Active, Expired, Completed, Error!
 
 function apiFindResponse(testId, input) {
-    const hmm = input.result
+    const hmm = input?.result ?? null;
     return [
         {
             status: {
@@ -88,7 +89,8 @@ function apiFindResponse(testId, input) {
 
 function apiFindResponseFailed(testId, input = null) {
     // const hmm = input.result
-const hmm = input?.result ?? null;
+    // const err = randomUUID
+    const hmm = input?.result ?? null;
     return [
         {
             status: {
