@@ -1,4 +1,4 @@
-@import url(../css/theme.css);
+@import url("theme.css");
 
 * {
     margin: 0;
@@ -19,9 +19,6 @@ header {
     /* overflow: hidden; */
     z-index: 1;
     /* margin:100px; */
-}
-body{
-    background:var(--body-bg);
 }
 
 .text-logo a {
@@ -65,13 +62,15 @@ nav ul li a {
 }
 
 .dropbtn1 {
-    background: transparent;
+    appearance: none;
+    background: none;
     border: none;
     color: white;
+    font: inherit;
     font-size: 21px;
     font-weight: bold;
     cursor: pointer;
-    /* padding: 0; */
+    padding: 0;
 }
 
 .dropbtn1_content {
@@ -96,12 +95,7 @@ nav ul li a {
     padding: 12px 16px;
     font-size: 15px;
     text-align: center;
-}
-
-.dropbtn1_content a {
     background: transparent;
-    backdrop-filter: blur(100px);
-    
 }
 
 /* .li1:hover .dropbtn1_content,
