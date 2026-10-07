@@ -3,3 +3,4 @@ node_modules/
 BiVi ChatBot/client_secret_*.json
 BiVi API/tests/
 BiVi ChatBot/tests/
+tests/
